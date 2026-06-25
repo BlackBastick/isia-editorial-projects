@@ -76,21 +76,13 @@ footer {
 
 .site-title {
   grid-column: 2 / -1;
-  font-size: 21px;
-  line-height: 21px;
-  white-space: nowrap;
-}
-
-.wordmark {
-  display: inline-block;
   width: fit-content;
   color: var(--ink);
   font-size: 21px;
   font-weight: 100;
   line-height: 21px;
-  letter-spacing: 0;
   text-decoration: none;
-  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .archive-toolbar {
