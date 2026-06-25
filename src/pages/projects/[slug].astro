@@ -1,0 +1,88 @@
+---
+import SiteHeader from "../../components/SiteHeader.astro";
+import { courseLabels, getProjectGallery, projects, type Project } from "../../data/projects";
+import "../../styles/global.css";
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const gallery = getProjectGallery(project);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="https://use.typekit.net/pcx5lgk.css" />
+    <meta name="description" content={project.description} />
+    <title>{project.title} — ISIA Urbino Editorial Projects</title>
+  </head>
+  <body>
+    <SiteHeader />
+
+    <main class="project-page">
+      <aside class="project-info">
+        <nav class="breadcrumb" aria-label="Percorso">
+          <a href="/">Projects</a>
+          <span aria-hidden="true">›</span>
+          <a href={`/?course=${encodeURIComponent(project.course)}`}>{courseLabels[project.course]}</a>
+        </nav>
+        <dl>
+          <div>
+            <dt>Progetto</dt>
+            <dd>{project.title}</dd>
+          </div>
+          <div>
+            <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
+            <dd>{project.student}</dd>
+          </div>
+          {
+            project.subject && (
+              <div>
+                <dt>Corso</dt>
+                <dd>{project.subject}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt>Docente</dt>
+            <dd>{project.teacher}</dd>
+          </div>
+          <div>
+            <dt>Anno</dt>
+            <dd>{project.year}</dd>
+          </div>
+          <div>
+            <dt>Indirizzo</dt>
+            <dd>{project.course}</dd>
+          </div>
+        </dl>
+        <p>{project.description}</p>
+      </aside>
+
+      <div class="project-gallery">
+        {
+          gallery.map((image, index) => (
+            <img
+              src={image}
+              alt={index === 0 ? project.imageAlt : `Immagine ${index + 1} del progetto ${project.title}`}
+              loading={index === 0 ? "eager" : "lazy"}
+              width="1200"
+              height="1500"
+            />
+          ))
+        }
+      </div>
+    </main>
+  </body>
+</html>

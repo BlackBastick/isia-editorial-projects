@@ -1,0 +1,60 @@
+---
+import type { Project } from "../data/projects";
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+---
+
+<article class="project-card" data-project data-course={project.course}>
+  <a class="project-card__link" href={`/projects/${project.slug}/`}>
+    <div class="project-card__image">
+      <img
+        src={project.image}
+        alt={project.imageAlt}
+        loading={index < 3 ? "eager" : "lazy"}
+        fetchpriority={index === 0 ? "high" : "auto"}
+        width="1200"
+        height="1500"
+      />
+    </div>
+
+    <div class="project-card__content">
+      <dl class="project-card__meta">
+        <div>
+          <dt>Progetto</dt>
+          <dd>{project.title}</dd>
+        </div>
+        <div>
+          <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
+          <dd>{project.student}</dd>
+        </div>
+        <div>
+          <dt>Docente</dt>
+          <dd>{project.teacher}</dd>
+        </div>
+        <div>
+          <dt>Anno</dt>
+          <dd>{project.year}</dd>
+      </div>
+      <div class="project-card__course">
+        <dt>Indirizzo</dt>
+        <dd>{project.course}</dd>
+      </div>
+      {
+        project.subject && (
+          <div>
+            <dt>Corso</dt>
+            <dd>{project.subject}</dd>
+          </div>
+        )
+      }
+      </dl>
+
+      <p>{project.summary ?? project.description}</p>
+    </div>
+  </a>
+</article>
