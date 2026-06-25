@@ -79,6 +79,8 @@ Pure white and near-black carry the entire structure.
 
 The interface is completely flat. Depth comes from image scale and white space; shadows and decorative divider rules are not used.
 
+The single entrance animation first holds “ISIA URBINO EDITORIAL PROJECT” intact in a light treatment, then moves its letters clockwise in reading order strictly along the viewport perimeter, passing through the corners rather than crossing the page. The initial “I” remains in the top-left origin. The transparent header stays sticky above the content, and the animation is disabled for reduced-motion users.
+
 ## Components
 
 ### Chips

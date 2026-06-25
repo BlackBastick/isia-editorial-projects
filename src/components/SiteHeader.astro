@@ -1,5 +1,100 @@
 <header class="site-header">
-  <a class="site-title" href="/" aria-label="ISIA Urbino Editorial Projects, homepage">
-    ISIA Urbino Editorial Projects
+  <span class="site-title" aria-hidden="true">
+    {
+      [..."ISIA URBINO EDITORIAL PROJECT"].map((character) =>
+        character === " "
+          ? <span class="site-title__space"> </span>
+          : <span class="site-title__letter">{character}</span>
+      )
+    }
+  </span>
+  <a class="site-frame-link" href="/" aria-label="Torna alla homepage">
+    <span class="site-frame-link__top"></span>
+    <span class="site-frame-link__right"></span>
+    <span class="site-frame-link__bottom"></span>
+    <span class="site-frame-link__left"></span>
   </a>
 </header>
+
+<script>
+  const mark = document.querySelector<HTMLElement>(".site-title");
+  const letters = [...document.querySelectorAll<HTMLElement>(".site-title__letter")];
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (mark && letters.length && !reduceMotion) {
+    await document.fonts.ready;
+    const placeLetters = (animate = false) => {
+      letters.forEach((letter) => letter.getAnimations().forEach((animation) => animation.cancel()));
+      const sources = letters.map((letter) => letter.getBoundingClientRect());
+      const glyphWidth = Math.max(...sources.map(({ width }) => width));
+      const glyphHeight = Math.max(...sources.map(({ height }) => height));
+      const edgeInset = 2;
+      const origin = { left: edgeInset, top: edgeInset };
+      const right = innerWidth - edgeInset - glyphWidth;
+      const bottom = innerHeight + 5 - glyphHeight;
+      const topWidth = right - origin.left;
+      const width = right - edgeInset;
+      const height = bottom - origin.top;
+      const perimeter = topWidth + height * 2 + width;
+      const points = letters.map((_, index) => {
+        let distance = index * perimeter / letters.length;
+
+        if (index === 0) return { x: origin.left, y: origin.top };
+        if (distance <= topWidth) return { x: origin.left + distance, y: origin.top };
+        distance -= topWidth;
+        if (distance <= height) return { x: right, y: origin.top + distance };
+        distance -= height;
+        if (distance <= width) return { x: right - distance, y: bottom };
+        distance -= width;
+        return { x: edgeInset, y: bottom - distance };
+      });
+
+      mark.classList.add("is-scattered");
+
+      letters.forEach((letter, index) => {
+        const source = sources[index];
+        const target = points[index];
+        letter.style.left = `${target.x}px`;
+        letter.style.top = `${target.y}px`;
+
+        if (!animate) return;
+
+        const path = [{ x: source.left, y: source.top }];
+        if (index > 0 && (target.y > origin.top || target.x < source.left)) path.push({ x: right, y: origin.top });
+        if (index > 0 && (target.y === bottom || target.x === edgeInset)) path.push({ x: right, y: bottom });
+        if (index > 0 && target.x === edgeInset) path.push({ x: edgeInset, y: bottom });
+        path.push(target);
+
+        const distances = path.slice(1).map((point, pointIndex) =>
+          Math.hypot(point.x - path[pointIndex].x, point.y - path[pointIndex].y)
+        );
+        const total = distances.reduce((sum, distance) => sum + distance, 0);
+        let travelled = 0;
+        const keyframes = path.map((point, pointIndex) => {
+          if (pointIndex > 0) travelled += distances[pointIndex - 1];
+          return {
+            offset: total ? travelled / total : 1,
+            transform: `translate(${point.x - target.x}px, ${point.y - target.y}px)`,
+          };
+        });
+
+        letter.animate(keyframes, {
+          duration: 1800,
+          delay: 700 + index * 28,
+          easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+          fill: "both",
+        });
+      });
+    };
+
+    let resizeFrame = 0;
+    const resize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => placeLetters());
+    };
+
+    placeLetters(true);
+    addEventListener("resize", resize);
+    visualViewport?.addEventListener("resize", resize);
+  }
+</script>
