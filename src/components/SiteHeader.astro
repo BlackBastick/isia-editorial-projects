@@ -1,3 +1,7 @@
+---
+import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "../data/projects";
+---
+
 <header class="site-header">
   <span class="site-title" aria-hidden="true">
     {
@@ -8,6 +12,11 @@
       )
     }
   </span>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
   <a class="site-frame-link" href="/" aria-label="Torna alla homepage">
     <span class="site-frame-link__top"></span>
     <span class="site-frame-link__right"></span>
@@ -15,6 +24,25 @@
     <span class="site-frame-link__left"></span>
   </a>
 </header>
+
+<aside class="site-menu" id="site-menu" aria-hidden="true">
+  <button class="menu-close" type="button" aria-label="Chiudi menu">×</button>
+  <nav aria-label="Filtri archivio">
+    <a href="/">Tutti</a>
+    <span aria-hidden="true">—</span>
+    {
+      courses.map((course) => <a href={`/corsi/${entitySlug(course)}/`}>{courseLabels[course]}</a>)
+    }
+    <span aria-hidden="true">—</span>
+    {
+      uniqueSubjects().map((subject) => <a href={`/insegnamenti/${entitySlug(subject)}/`}>{subject}</a>)
+    }
+    <span aria-hidden="true">—</span>
+    {
+      uniqueYears().map((year) => <a href={`/anni/${year}/`}>{year}</a>)
+    }
+  </nav>
+</aside>
 
 <div class="site-intro" aria-hidden="true">
   <div>
@@ -33,7 +61,23 @@
   const mark = document.querySelector<HTMLElement>(".site-title");
   const intro = document.querySelector<HTMLElement>(".site-intro");
   const letters = [...document.querySelectorAll<HTMLElement>(".site-title__letter")];
+  const menu = document.querySelector<HTMLElement>(".site-menu");
+  const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
+  const menuClose = document.querySelector<HTMLButtonElement>(".menu-close");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const setMenu = (open: boolean) => {
+    document.documentElement.classList.toggle("has-menu-open", open);
+    menu?.setAttribute("aria-hidden", String(!open));
+    menuToggle?.setAttribute("aria-expanded", String(open));
+    menuToggle?.setAttribute("aria-label", open ? "Chiudi menu" : "Apri menu");
+  };
+
+  menuToggle?.addEventListener("click", () => setMenu(!document.documentElement.classList.contains("has-menu-open")));
+  menuClose?.addEventListener("click", () => setMenu(false));
+  addEventListener("keydown", (event) => {
+    if (event.key === "Escape") setMenu(false);
+  });
 
   if (mark && letters.length) {
     await document.fonts.ready;

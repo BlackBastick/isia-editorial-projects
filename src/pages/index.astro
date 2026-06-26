@@ -1,7 +1,7 @@
 ---
 import ProjectCard from "../components/ProjectCard.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { courseLabels, courses, projects } from "../data/projects";
+import { projects } from "../data/projects";
 import "../styles/global.css";
 ---
 
@@ -20,25 +20,6 @@ import "../styles/global.css";
     <SiteHeader />
 
     <main>
-      <div class="archive-toolbar">
-        <nav class="filters" aria-label="Filtra i progetti per corso">
-          <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">
-            Tutti <span>{projects.length}</span>
-          </button>
-          {
-            courses.map((course) => (
-              <button class="filter" type="button" data-filter={course} aria-pressed="false">
-                {courseLabels[course]} <span>{projects.filter((project) => project.course === course).length}</span>
-              </button>
-            ))
-          }
-        </nav>
-
-        <p class="results" aria-live="polite">
-          <span data-results>{projects.length}</span> progetti
-        </p>
-      </div>
-
       <section class="project-grid" aria-label="Progetti">
         {projects.map((project, index) => <ProjectCard project={project} index={index} />)}
       </section>
@@ -49,39 +30,5 @@ import "../styles/global.css";
       <p>Archivio indipendente a scopo didattico</p>
     </footer>
 
-    <script>
-      const buttons = document.querySelectorAll<HTMLButtonElement>("[data-filter]");
-      const cards = document.querySelectorAll<HTMLElement>("[data-project]");
-      const results = document.querySelector<HTMLElement>("[data-results]");
-
-      const applyFilter = (filter = "all") => {
-        let visible = 0;
-
-        buttons.forEach((item) => {
-          const active = item.dataset.filter === filter;
-          item.classList.toggle("is-active", active);
-          item.setAttribute("aria-pressed", String(active));
-        });
-
-        cards.forEach((card) => {
-          const matches = filter === "all" || card.dataset.course === filter;
-          card.hidden = !matches;
-          if (matches) visible += 1;
-        });
-
-        if (results) results.textContent = String(visible);
-      };
-
-      buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-          const filter = button.dataset.filter ?? "all";
-          applyFilter(filter);
-          history.replaceState(null, "", filter === "all" ? location.pathname : `?course=${encodeURIComponent(filter)}`);
-        });
-      });
-
-      const requestedCourse = new URLSearchParams(location.search).get("course");
-      applyFilter(requestedCourse && [...buttons].some((button) => button.dataset.filter === requestedCourse) ? requestedCourse : "all");
-    </script>
   </body>
 </html>

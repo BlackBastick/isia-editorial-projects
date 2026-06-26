@@ -13,9 +13,7 @@ const { label, title, projects } = Astro.props;
 
 <main class="entity-page">
   <header class="entity-heading">
-    <p>{label}</p>
-    <h1>{title}</h1>
-    <p>{projects.length} {projects.length === 1 ? "progetto" : "progetti"}</p>
+    <h1>{label}: {title}, {projects.length} {projects.length === 1 ? "progetto" : "progetti"}</h1>
   </header>
 
   <section class="project-grid" aria-label={`Progetti: ${title}`}>
