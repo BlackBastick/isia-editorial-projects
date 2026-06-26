@@ -500,7 +500,25 @@ footer p {
 }
 
 @media (max-width: 42rem) {
+  html,
+  body {
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .site-header {
+    flex: 0 0 auto;
     grid-template-columns: 1fr;
     gap: var(--space-md);
   }
@@ -534,7 +552,7 @@ footer p {
   }
 
   footer {
-    flex-direction: column;
+    display: none;
   }
 
   .site-frame-link .site-frame-link__bottom {

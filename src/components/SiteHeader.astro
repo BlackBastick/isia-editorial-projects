@@ -47,7 +47,10 @@
     const edgeInset = gutter / 2;
     const mobileQuery = matchMedia("(max-width: 42rem)");
     const freezeMobileFrame = mobileQuery.matches;
-    const frozenFrame = { width: innerWidth, height: innerHeight };
+    const frozenFrame = {
+      width: visualViewport?.width ?? innerWidth,
+      height: visualViewport?.height ?? innerHeight,
+    };
     const slot = 0.96 / letters.length;
     const slots = [0, ...letters.slice(1).map((_, index) => (index + 1) * slot)];
 
@@ -91,8 +94,8 @@
       };
 
       const mobilePoints = () => {
-        const topCount = 12;
-        const rightCount = 7;
+        const topCount = 10;
+        const rightCount = 9;
         return letters.map((_, index) => {
           if (index < topCount) {
             return { x: origin.x + (topWidth * index) / (topCount - 1), y: origin.y, side: "top" };
@@ -102,7 +105,7 @@
           }
           const leftIndex = index - topCount - rightCount;
           const leftCount = letters.length - topCount - rightCount;
-          return { x: edgeInset, y: origin.y + (sideHeight * leftIndex) / (leftCount - 1), side: "left" };
+          return { x: edgeInset, y: bottom - (sideHeight * leftIndex) / (leftCount - 1), side: "left" };
         });
       };
       const points = isMobile ? mobilePoints() : slots.map((slot) => pointAt(slot * perimeter));
