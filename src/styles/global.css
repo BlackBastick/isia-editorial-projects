@@ -502,7 +502,7 @@ footer p {
 @media (max-width: 42rem) {
   html,
   body {
-    height: 100svh;
+    height: 100dvh;
     overflow: hidden;
   }
 

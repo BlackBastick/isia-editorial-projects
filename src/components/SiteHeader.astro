@@ -96,16 +96,18 @@
       const mobilePoints = () => {
         const topCount = 10;
         const rightCount = 9;
+        const sideTop = origin.y + Math.max(18, sources[0].height);
+        const sideHeightInset = bottom - sideTop;
         return letters.map((_, index) => {
           if (index < topCount) {
             return { x: origin.x + (topWidth * index) / (topCount - 1), y: origin.y, side: "top" };
           }
           if (index < topCount + rightCount) {
-            return { x: right, y: origin.y + (sideHeight * (index - topCount)) / (rightCount - 1), side: "right" };
+            return { x: right, y: sideTop + (sideHeightInset * (index - topCount)) / (rightCount - 1), side: "right" };
           }
           const leftIndex = index - topCount - rightCount;
           const leftCount = letters.length - topCount - rightCount;
-          return { x: edgeInset, y: bottom - (sideHeight * leftIndex) / (leftCount - 1), side: "left" };
+          return { x: edgeInset, y: bottom - (sideHeightInset * leftIndex) / (leftCount - 1), side: "left" };
         });
       };
       const points = isMobile ? mobilePoints() : slots.map((slot) => pointAt(slot * perimeter));
