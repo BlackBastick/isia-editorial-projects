@@ -1,3 +1,19 @@
+@font-face {
+  font-family: "Halyard Display Book Local";
+  src: url("../../Halyard/fonnts.com-Halyard_Display_Book.otf") format("opentype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Halyard Display Regular Local";
+  src: url("../../Halyard/fonnts.com-Halyard_Display_Regular.otf") format("opentype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 :root {
   --paper: oklch(1 0 0);
   --ink: oklch(0.08 0 0);
@@ -13,10 +29,17 @@
   --archive-gap: 1rem;
   --header-height: 53px;
   --page-gutter: 1.25rem;
-  font-family: "halyard-display", "Helvetica Neue", sans-serif;
+  --intro-indent: 11px;
+  --intro-type-size: 23px;
+  --intro-line-height: 19.17px;
+  font-family: "Halyard Display Regular Local", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   color: var(--ink);
   background: var(--paper);
   font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -39,6 +62,7 @@ body {
   background: var(--paper);
   font-size: 1rem;
   font-size: 16px;
+  font-weight: 400;
   line-height: 18px;
 }
 
@@ -74,6 +98,7 @@ footer {
   align-items: start;
   gap: var(--archive-gap);
   padding-block: var(--space-md);
+  font-family: "Halyard Display Book Local", sans-serif;
   font-weight: 400;
 }
 
@@ -85,9 +110,10 @@ footer {
   grid-column: 1 / -1;
   width: fit-content;
   color: var(--ink);
-  font-size: 21px;
+  font-size: var(--intro-type-size);
+  font-family: "Halyard Display Book Local", sans-serif;
   font-weight: 400;
-  line-height: 21px;
+  line-height: var(--intro-line-height);
   opacity: 0.62;
   text-decoration: none;
   white-space: nowrap;
@@ -97,6 +123,10 @@ footer {
 .site-title__space {
   display: inline-block;
   width: 0.25em;
+}
+
+.site-title__letter {
+  display: inline-block;
 }
 
 .site-title.is-scattered {
@@ -111,6 +141,54 @@ footer {
   position: fixed;
   z-index: 20;
   pointer-events: none;
+}
+
+.site-intro {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  padding: 2px var(--page-gutter);
+  background: var(--paper);
+  color: var(--ink);
+  transition: opacity 700ms ease;
+}
+
+.site-intro > div {
+  transition: opacity 180ms ease;
+}
+
+.site-intro.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site-intro.is-leaving > div {
+  opacity: 0;
+}
+
+.site-intro p {
+  margin: 0;
+  font-size: var(--intro-type-size);
+  font-family: "Halyard Display Book Local", sans-serif;
+  font-weight: 400;
+  line-height: var(--intro-line-height);
+}
+
+.site-intro__logo {
+  margin-left: var(--intro-indent) !important;
+}
+
+.site-intro__school {
+  margin-top: 0 !important;
+  padding-left: var(--intro-indent);
+}
+
+.site-intro__school-line {
+  display: block;
+}
+
+.site-intro__school-line--flush {
+  margin-left: calc(var(--intro-indent) * -1);
 }
 
 .site-frame-link {
@@ -180,7 +258,7 @@ footer {
   padding: 0.4rem 0.65rem;
   border: 1px solid var(--ink);
   background: var(--paper);
-  font-weight: 100;
+  font-weight: 400;
   line-height: 18px;
   text-align: left;
   cursor: pointer;
@@ -202,7 +280,7 @@ footer {
 .results {
   flex: 0 0 auto;
   margin: 0;
-  font-weight: 100;
+  font-weight: 400;
   white-space: nowrap;
 }
 
@@ -261,7 +339,7 @@ footer {
 .project-card__meta dd {
   margin: 0;
   font-size: 16px;
-  font-weight: 100;
+  font-weight: 400;
   line-height: 18px;
 }
 
@@ -276,7 +354,7 @@ footer {
   margin: var(--space-lg) 0 0;
   overflow: hidden;
   font-size: 16px;
-  font-weight: 100;
+  font-weight: 400;
   line-height: 18px;
   text-wrap: pretty;
 }
@@ -297,7 +375,7 @@ footer {
   justify-content: space-between;
   gap: var(--space-md);
   padding-block: var(--space-md) var(--space-xl);
-  font-weight: 100;
+  font-weight: 400;
 }
 
 footer p {
@@ -354,7 +432,7 @@ footer p {
 .project-info p {
   margin: 0;
   font-size: 16px;
-  font-weight: 100;
+  font-weight: 400;
   line-height: 18px;
 }
 
@@ -451,6 +529,15 @@ footer p {
 
   footer {
     flex-direction: column;
+  }
+
+  .site-frame-link .site-frame-link__bottom {
+    display: none;
+  }
+
+  .site-frame-link__right,
+  .site-frame-link__left {
+    bottom: 0;
   }
 }
 

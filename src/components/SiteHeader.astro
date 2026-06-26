@@ -16,53 +16,108 @@
   </a>
 </header>
 
+<div class="site-intro" aria-hidden="true">
+  <div>
+    <p class="site-intro__logo">ISIA URBINO EDITORIAL PROJECT</p>
+    <p class="site-intro__school">
+      <span class="site-intro__school-line">Istituto</span>
+      <span class="site-intro__school-line site-intro__school-line--flush">Superiore per le</span>
+      <span class="site-intro__school-line">Industrie</span>
+      <span class="site-intro__school-line site-intro__school-line--flush">Artistiche di</span>
+      <span class="site-intro__school-line site-intro__school-line--flush">Urbino</span>
+    </p>
+  </div>
+</div>
+
 <script>
   const mark = document.querySelector<HTMLElement>(".site-title");
+  const intro = document.querySelector<HTMLElement>(".site-intro");
   const letters = [...document.querySelectorAll<HTMLElement>(".site-title__letter")];
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  if (mark && letters.length && !reduceMotion) {
+  if (mark && letters.length) {
     await document.fonts.ready;
+    const introLogo = document.querySelector<HTMLElement>(".site-intro__logo");
+    const introOrigin = introLogo?.getBoundingClientRect();
+    const gutterValue = getComputedStyle(document.documentElement).getPropertyValue("--page-gutter").trim();
+    const rootSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const gutter = gutterValue.endsWith("rem")
+      ? Number.parseFloat(gutterValue) * rootSize
+      : Number.parseFloat(gutterValue) || 20;
+    const edgeInset = gutter / 2;
+    const mobileQuery = matchMedia("(max-width: 42rem)");
+    const freezeMobileFrame = mobileQuery.matches;
+    const frozenFrame = { width: innerWidth, height: innerHeight };
+    const slot = 0.96 / letters.length;
+    const slots = [0, ...letters.slice(1).map((_, index) => (index + 1) * slot)];
+
     const placeLetters = (animate = false) => {
       letters.forEach((letter) => letter.getAnimations().forEach((animation) => animation.cancel()));
-      const sources = letters.map((letter) => letter.getBoundingClientRect());
-      const glyphWidth = Math.max(...sources.map(({ width }) => width));
-      const glyphHeight = Math.max(...sources.map(({ height }) => height));
-      const edgeInset = 2;
-      const origin = { left: edgeInset, top: edgeInset };
-      const right = innerWidth - edgeInset - glyphWidth;
-      const bottom = innerHeight + 5 - glyphHeight;
-      const topWidth = right - origin.left;
-      const width = right - edgeInset;
-      const height = bottom - origin.top;
-      const perimeter = topWidth + height * 2 + width;
-      const points = letters.map((_, index) => {
-        let distance = index * perimeter / letters.length;
+      mark.style.position = "fixed";
+      mark.style.left = `${edgeInset}px`;
+      mark.style.top = `${edgeInset}px`;
+      const sources = letters.map((letter) => {
+        const rect = letter.getBoundingClientRect();
+        return {
+          left: rect.left,
+          top: rect.top,
+          width: letter.offsetWidth || rect.width,
+          height: letter.offsetHeight || rect.height,
+        };
+      });
+      const frameWidth = freezeMobileFrame ? frozenFrame.width : innerWidth;
+      const frameHeight = freezeMobileFrame ? frozenFrame.height : innerHeight;
+      const isMobile = mobileQuery.matches;
+      const origin = {
+        x: (introOrigin?.left ?? gutter) + sources[0].width / 2,
+        y: (introOrigin?.top ?? 2) + sources[0].height / 2,
+      };
+      const right = frameWidth - edgeInset;
+      const bottom = isMobile ? Math.max(origin.y, frameHeight - 88) : frameHeight - edgeInset;
+      const topWidth = right - origin.x;
+      const sideHeight = bottom - origin.y;
+      const bottomWidth = right - origin.x;
+      const perimeter = isMobile ? topWidth + sideHeight * 2 : topWidth + sideHeight * 2 + bottomWidth;
 
-        if (index === 0) return { x: origin.left, y: origin.top };
-        if (distance <= topWidth) return { x: origin.left + distance, y: origin.top };
+      const pointAt = (distance: number) => {
+        if (distance <= topWidth) return { x: origin.x + distance, y: origin.y, side: "top" };
         distance -= topWidth;
-        if (distance <= height) return { x: right, y: origin.top + distance };
-        distance -= height;
-        if (distance <= width) return { x: right - distance, y: bottom };
-        distance -= width;
-        return { x: edgeInset, y: bottom - distance };
+        if (distance <= sideHeight) return { x: right, y: origin.y + distance, side: "right" };
+        distance -= sideHeight;
+        if (isMobile) return { x: edgeInset, y: origin.y + distance, side: "left" };
+        if (distance <= bottomWidth) return { x: right - distance, y: bottom, side: "bottom" };
+        distance -= bottomWidth;
+        return { x: edgeInset, y: bottom - distance, side: "left" };
+      };
+
+      const points = slots.map((slot) => pointAt(slot * perimeter));
+      const place = (point: { x: number; y: number; side: string }, rect: { width: number; height: number }) => ({
+        x: point.x - rect.width / 2,
+        y: point.y - rect.height / 2,
+        side: point.side,
       });
 
       mark.classList.add("is-scattered");
 
       letters.forEach((letter, index) => {
         const source = sources[index];
-        const target = points[index];
+        const target = place(points[index], source);
         letter.style.left = `${target.x}px`;
         letter.style.top = `${target.y}px`;
+        letter.style.opacity = "1";
 
-        if (!animate) return;
+        if (!animate || index === 0) return;
 
         const path = [{ x: source.left, y: source.top }];
-        if (index > 0 && (target.y > origin.top || target.x < source.left)) path.push({ x: right, y: origin.top });
-        if (index > 0 && (target.y === bottom || target.x === edgeInset)) path.push({ x: right, y: bottom });
-        if (index > 0 && target.x === edgeInset) path.push({ x: edgeInset, y: bottom });
+        if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
+          path.push(place({ x: right, y: origin.y, side: "top" }, source));
+        }
+        if (!isMobile && index > 0 && (target.side === "bottom" || target.side === "left")) {
+          path.push(place({ x: right, y: bottom, side: "bottom" }, source));
+        }
+        if (!isMobile && index > 0 && target.side === "left") {
+          path.push(place({ x: edgeInset, y: bottom, side: "left" }, source));
+        }
         path.push(target);
 
         const distances = path.slice(1).map((point, pointIndex) =>
@@ -80,7 +135,6 @@
 
         letter.animate(keyframes, {
           duration: 1800,
-          delay: 700 + index * 28,
           easing: "cubic-bezier(0.16, 1, 0.3, 1)",
           fill: "both",
         });
@@ -93,8 +147,17 @@
       resizeFrame = requestAnimationFrame(() => placeLetters());
     };
 
-    placeLetters(true);
-    addEventListener("resize", resize);
-    visualViewport?.addEventListener("resize", resize);
+    if (reduceMotion) {
+      intro?.remove();
+    } else {
+      setTimeout(() => {
+        intro?.classList.add("is-leaving");
+        placeLetters(true);
+        setTimeout(() => intro?.remove(), 900);
+      }, 1100);
+      if (!freezeMobileFrame) addEventListener("resize", resize);
+    }
+  } else {
+    intro?.remove();
   }
 </script>
