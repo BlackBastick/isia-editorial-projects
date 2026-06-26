@@ -1,6 +1,6 @@
 ---
 import SiteHeader from "../../components/SiteHeader.astro";
-import { courseLabels, getProjectGallery, projects, type Project } from "../../data/projects";
+import { courseLabels, getProjectGallery, isVideo, projects, type Project } from "../../data/projects";
 import "../../styles/global.css";
 
 export function getStaticPaths() {
@@ -71,17 +71,46 @@ const gallery = getProjectGallery(project);
 
       <div class="project-gallery">
         {
-          gallery.map((image, index) => (
-            <img
-              src={image}
-              alt={index === 0 ? project.imageAlt : `Immagine ${index + 1} del progetto ${project.title}`}
-              loading={index === 0 ? "eager" : "lazy"}
-              width="1200"
-              height="1500"
-            />
+          gallery.map((media, index) => (
+            isVideo(media) ? (
+              <video
+                src={media}
+                aria-label={index === 0 ? project.imageAlt : `Video ${index + 1} del progetto ${project.title}`}
+                data-gallery-media
+                autoplay
+                muted
+                loop
+                playsinline
+                preload={index === 0 ? "auto" : "metadata"}
+              />
+            ) : (
+              <img
+                src={media}
+                alt={index === 0 ? project.imageAlt : `Immagine ${index + 1} del progetto ${project.title}`}
+                data-gallery-media
+                loading={index === 0 ? "eager" : "lazy"}
+                width="1200"
+                height="1500"
+              />
+            )
           ))
         }
       </div>
     </main>
+    <script>
+      document.querySelectorAll("img[data-gallery-media]").forEach((image) => {
+        const img = image as HTMLImageElement;
+        const mark = () => img.classList.toggle("is-landscape", img.naturalWidth > img.naturalHeight);
+        img.addEventListener("load", mark, { once: true });
+        if (img.complete) mark();
+      });
+
+      document.querySelectorAll("video[data-gallery-media]").forEach((video) => {
+        const vid = video as HTMLVideoElement;
+        const mark = () => vid.classList.toggle("is-landscape", vid.videoWidth > vid.videoHeight);
+        vid.addEventListener("loadedmetadata", mark, { once: true });
+        if (vid.readyState >= 1) mark();
+      });
+    </script>
   </body>
 </html>

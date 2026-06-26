@@ -29,6 +29,8 @@ export type Project = {
   gallery?: string[];
 };
 
+export const isVideo = (src: string) => /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
+
 const gallery = (slug: string, count: number) =>
   Array.from({ length: count }, (_, index) => `/images/${slug}/${String(index + 1).padStart(2, "0")}.jpg`);
 
@@ -79,69 +81,78 @@ export const projects: Project[] = [
   },
   {
     slug: "only-two",
-    title: "Only Two",
+    title: "(Only Two) Open Windows",
     student: "Alberto Guglielmi",
-    teacher: "Michele Cera",
+    teacher: "Paola De Pietri",
     year: 2025,
-    course: courses[2],
-    subject: "Progettazione fotografica",
+    course: courses[1],
+    subject: "Progettazione grafica dell'immagine 2",
     description:
-      "Un racconto fotografico costruito attraverso coppie di immagini, distanze e ripetizioni che mettono in tensione persone e luoghi.",
-    image: "/images/only-two/01.jpg",
+      "(Only Two) Open Windows osserva tre complessi residenziali sul mare tra Marotta e Senigallia, raccontando il rapporto tra architettura, paesaggio costiero e vita stagionale.\n\nAttraverso finestre aperte, balconi chiusi, superfici consumate e tracce quotidiane, il progetto indaga edifici pensati per abitare un margine instabile: quello tra interno ed esterno, presenza e assenza, privato e pubblico.",
+    image: "/images/only-two/01.mp4",
     imageAlt: "Libro fotografico aperto su una doppia pagina",
-    gallery: gallery("only-two", 11),
+    gallery: ["/images/only-two/01.mp4", ...gallery("only-two", 12).slice(1)],
   },
   {
-    slug: "margini",
-    title: "Margini",
-    student: "Sofia De Angelis",
-    teacher: "Silvia Sfligiotti",
+    slug: "Back-to-the-real-life",
+    title: "Back to the real life",
+    student: "Elisa Marchesini",
+    teacher: "Armin Linke, Luca Capuano",
+    year: 2025,
+    course: courses[2],
+        subject: "Tesi magistrale in Fotografia",
+    description:
+      "“Back to the real life” è una ricerca visiva che esplora una nave da crociera come macchina da spettacolo. Attraverso l’analisi di scenografie, storie e spazi dietro le quinte, il progetto mette in luce come la nave crei un mondo parallelo e condiviso, dove la realtà quotidiana lascia spazio a un’esperienza collettiva e teatrale.",
+    image:
+      "/images/back-to-the-real-life/01.jpg",
+    imageAlt: "Libro aperto su un tavolo chiaro",
+    gallery: gallery("back-to-the-real-life", 6),
+
+  },
+  {
+    slug: "prima-o-poi",
+    title: "Prima o poi",
+    student: "Valeria Cardea",
+    teacher: "Pia Valentinis, Federica Alma Iacobelli",
+    year: 2025,
+    course: courses[3],
+            subject: "Tesi magistrale in Illustrazione",
+    description:
+      "Il concetto di tempo è uno dei temi più affascinanti e complessi affrontati dalla filosofia e dalla scienza. Esso permea ogni aspetto della nostra esistenza, scandendo i ritmi della vita quotidiana e influenzando profondamente la nostra percezione del mondo.\n\nL'obiettivo della ricerca è quello di investigare le implicazioni di un tempo non ordinato, esaminando come ciò influenzerebbe la nostra percezione della realtà e la nostra comprensione dell’universo. L’intento è quello di fornire una comprensione teorica e una visione tangibile di un immaginario dove il prima e il poi si dissolvono in un flusso di eventi interconnessi.",
+    image:
+      "/images/prima-o-poi/01.jpg",
+    imageAlt: "Pagine e stampe disposte su un piano di lavoro",
+        gallery: gallery("prima-o-poi", 6),
+  },
+  {
+    slug: "non-binary-society",
+    title: "Non-binary society",
+    student: "Samuele Cucuietu",
+    teacher: "Jonathan Pierini, Matteo Guidi",
     year: 2024,
     course: courses[1],
+    subject: "Tesi magistrale in Editoria",
     description:
-      "Una rivista indipendente sulle culture periferiche, progettata come sequenza di voci, immagini e apparati critici.",
+      "“Non-binary society, Binary barriers” esplora le identità non binarie e le barriere culturali e sociali che le attraversano nella società contemporanea. Attraverso una tavola rotonda con studentesse e studenti della facoltà di Gender Studies dell’Università di Innsbruck, il progetto raccoglie esperienze, prospettive e sfide vissute.\n\nLa ricerca riflette sul linguaggio e sulla rappresentazione, evidenziandone il potenziale trasformativo nella costruzione di spazi più inclusivi, e affronta le intersezioni tra identità, cultura e linguaggio in un’ottica intersezionale.",
     image:
-      "https://images.unsplash.com/photo-1545235617-9465d2a55698?auto=format&fit=crop&w=1600&q=85",
-    imageAlt: "Libro aperto su un tavolo chiaro",
-  },
-  {
-    slug: "luce-residua",
-    title: "Luce residua",
-    student: "Tommaso Guerra",
-    teacher: "Francesco Jodice",
-    year: 2025,
-    course: courses[2],
-    description:
-      "Un’indagine notturna sui territori dell’Appennino e sulle tracce luminose lasciate dalle attività umane.",
-    image:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=1600&q=85",
-    imageAlt: "Pagine e stampe disposte su un piano di lavoro",
-  },
-  {
-    slug: "erbario-fantastico",
-    title: "Erbario fantastico",
-    student: "Anna Pagliardini",
-    teacher: "Chiara Carrer",
-    year: 2023,
-    course: courses[3],
-    description:
-      "Tavole botaniche immaginarie nate dall’incontro tra osservazione scientifica, collage e narrazione breve.",
-    image:
-      "https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=1600&q=85",
+      "/images/non-binary-society/01.jpg",
     imageAlt: "Opere incorniciate esposte su una parete",
+            gallery: gallery("non-binary-society", 7),
   },
   {
-    slug: "forme-della-voce",
-    title: "Forme della voce",
-    student: "Lorenzo Vitali",
-    teacher: "Daniele Ledda",
-    year: 2022,
+    slug: "territorio-e-transizione",
+    title: "Territorio e transizione",
+    student: "Nina Pambianco, Leonardo Metz",
+    teacher: "Nicola Chemotti Beutel",
+    year: 2026,
     course: courses[0],
+    subject: "Grafica editoriale",
     description:
-      "Un’identità visiva generativa per un archivio orale, dove ritmo, intensità e pause diventano forme tipografiche.",
+      "Il progetto editoriale mira a sottolineare la trasformazione del territorio dell’Alta Tuscia, attraverso un’immaginario che faccia emergere la frammentazione e la perdita delle origini di questi luoghi.\n\nPaesaggio Residuo è un progetto di ricerca a cura di Leonardo Metz che esplora la decostruzione dell’inquinamento acustico legato alle energie rinnovabili, come la transizione energetica ridisegni non solo l’ambiente, ma anche l’identità sociale della vita provinciale e la memoria dei luoghi.",
     image:
-      "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1600&q=85",
+      "/images/territorio-e-transizione/01.mp4",
     imageAlt: "Mano che scrive su un quaderno aperto",
+     gallery: ["/images/territorio-e-transizione/01.mp4", ...gallery("territorio-e-transizione", 7).slice(1)],
   },
 ];
 

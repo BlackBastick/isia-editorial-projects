@@ -1,5 +1,5 @@
 ---
-import type { Project } from "../data/projects";
+import { isVideo, type Project } from "../data/projects";
 
 interface Props {
   project: Project;
@@ -8,19 +8,26 @@ interface Props {
 
 const { project, index } = Astro.props;
 const description = project.description.replace(/\s+/g, " ").trim();
+const coverIsVideo = isVideo(project.image);
 ---
 
 <article class="project-card" data-project data-course={project.course}>
   <a class="project-card__link" href={`/projects/${project.slug}/`}>
     <div class="project-card__image">
-      <img
-        src={project.image}
-        alt={project.imageAlt}
-        loading={index < 3 ? "eager" : "lazy"}
-        fetchpriority={index === 0 ? "high" : "auto"}
-        width="1200"
-        height="1500"
-      />
+      {
+        coverIsVideo ? (
+          <video src={project.image} aria-label={project.imageAlt} autoplay muted loop playsinline preload={index < 3 ? "auto" : "metadata"} />
+        ) : (
+          <img
+            src={project.image}
+            alt={project.imageAlt}
+            loading={index < 3 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : "auto"}
+            width="1200"
+            height="1500"
+          />
+        )
+      }
     </div>
 
     <div class="project-card__content">
