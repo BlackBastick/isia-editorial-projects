@@ -73,7 +73,9 @@
         y: (introOrigin?.top ?? 2) + sources[0].height / 2,
       };
       const right = frameWidth - edgeInset;
-      const bottom = isMobile ? Math.max(origin.y, frameHeight - 88) : frameHeight - edgeInset;
+      const bottom = isMobile
+        ? Math.min(frameHeight - 88, origin.y + Math.max(150, Math.min(frameHeight * 0.36, 260)))
+        : frameHeight - edgeInset;
       const topWidth = right - origin.x;
       const sideHeight = bottom - origin.y;
       const bottomWidth = right - origin.x;
@@ -109,6 +111,9 @@
         if (!animate || index === 0) return;
 
         const path = [{ x: source.left, y: source.top }];
+        if (isMobile && index > 0 && target.side === "left") {
+          path.push(place({ x: edgeInset, y: origin.y, side: "left" }, source));
+        }
         if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
           path.push(place({ x: right, y: origin.y, side: "top" }, source));
         }
