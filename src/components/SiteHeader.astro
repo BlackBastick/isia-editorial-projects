@@ -73,9 +73,7 @@
         y: (introOrigin?.top ?? 2) + sources[0].height / 2,
       };
       const right = frameWidth - edgeInset;
-      const bottom = isMobile
-        ? Math.min(frameHeight - 88, origin.y + Math.max(150, Math.min(frameHeight * 0.36, 260)))
-        : frameHeight - edgeInset;
+      const bottom = frameHeight - edgeInset;
       const topWidth = right - origin.x;
       const sideHeight = bottom - origin.y;
       const bottomWidth = right - origin.x;
@@ -92,7 +90,22 @@
         return { x: edgeInset, y: bottom - distance, side: "left" };
       };
 
-      const points = slots.map((slot) => pointAt(slot * perimeter));
+      const mobilePoints = () => {
+        const topCount = 12;
+        const rightCount = 7;
+        return letters.map((_, index) => {
+          if (index < topCount) {
+            return { x: origin.x + (topWidth * index) / (topCount - 1), y: origin.y, side: "top" };
+          }
+          if (index < topCount + rightCount) {
+            return { x: right, y: origin.y + (sideHeight * (index - topCount)) / (rightCount - 1), side: "right" };
+          }
+          const leftIndex = index - topCount - rightCount;
+          const leftCount = letters.length - topCount - rightCount;
+          return { x: edgeInset, y: origin.y + (sideHeight * leftIndex) / (leftCount - 1), side: "left" };
+        });
+      };
+      const points = isMobile ? mobilePoints() : slots.map((slot) => pointAt(slot * perimeter));
       const place = (point: { x: number; y: number; side: string }, rect: { width: number; height: number }) => ({
         x: point.x - rect.width / 2,
         y: point.y - rect.height / 2,
