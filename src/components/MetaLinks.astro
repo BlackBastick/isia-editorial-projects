@@ -1,0 +1,23 @@
+---
+import { entitySlug, splitNames, type Course } from "../data/projects";
+
+type Kind = "student" | "teacher" | "course" | "subject" | "year";
+
+interface Props {
+  kind: Kind;
+  value: string | Course | number;
+}
+
+const { kind, value } = Astro.props;
+const base = kind === "student" ? "studenti" : kind === "teacher" ? "docenti" : kind === "course" ? "corsi" : kind === "subject" ? "insegnamenti" : "anni";
+const items = kind === "student" || kind === "teacher" ? splitNames(String(value)) : [String(value)];
+---
+
+{
+  items.map((item, index) => (
+    <>
+      {index > 0 && ", "}
+      <a class="meta-link" href={`/${base}/${entitySlug(item)}/`}>{item}</a>
+    </>
+  ))
+}

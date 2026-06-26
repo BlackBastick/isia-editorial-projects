@@ -31,6 +31,34 @@ export type Project = {
 
 export const isVideo = (src: string) => /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
 
+export const splitNames = (value: string) => value.split(",").map((name) => name.trim()).filter(Boolean);
+
+export const entitySlug = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+export const uniqueStudents = () => [...new Set(projects.flatMap((project) => splitNames(project.student)))];
+
+export const uniqueTeachers = () => [...new Set(projects.flatMap((project) => splitNames(project.teacher)))];
+
+export const uniqueSubjects = () => [...new Set(projects.flatMap((project) => project.subject ? [project.subject] : []))];
+
+export const uniqueYears = () => [...new Set(projects.map((project) => project.year))].sort((a, b) => b - a);
+
+export const projectsByStudent = (student: string) => projects.filter((project) => splitNames(project.student).includes(student));
+
+export const projectsByTeacher = (teacher: string) => projects.filter((project) => splitNames(project.teacher).includes(teacher));
+
+export const projectsByCourse = (course: Course) => projects.filter((project) => project.course === course);
+
+export const projectsBySubject = (subject: string) => projects.filter((project) => project.subject === subject);
+
+export const projectsByYear = (year: number) => projects.filter((project) => project.year === year);
+
 const gallery = (slug: string, count: number) =>
   Array.from({ length: count }, (_, index) => `/images/${slug}/${String(index + 1).padStart(2, "0")}.jpg`);
 

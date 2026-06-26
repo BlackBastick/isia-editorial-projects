@@ -1,4 +1,5 @@
 ---
+import MetaLinks from "./MetaLinks.astro";
 import { isVideo, type Project } from "../data/projects";
 
 interface Props {
@@ -12,7 +13,7 @@ const coverIsVideo = isVideo(project.image);
 ---
 
 <article class="project-card" data-project data-course={project.course}>
-  <a class="project-card__link" href={`/projects/${project.slug}/`}>
+  <a class="project-card__link" href={`/projects/${project.slug}/`} aria-label={`Apri il progetto ${project.title}`}>
     <div class="project-card__image">
       {
         coverIsVideo ? (
@@ -29,40 +30,39 @@ const coverIsVideo = isVideo(project.image);
         )
       }
     </div>
-
-    <div class="project-card__content">
-      <dl class="project-card__meta">
-        <div>
-          <dt>Progetto</dt>
-          <dd>{project.title}</dd>
-        </div>
-        <div>
-          <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
-          <dd>{project.student}</dd>
-        </div>
-        <div>
-          <dt>Docente</dt>
-          <dd>{project.teacher}</dd>
-        </div>
-        <div>
-          <dt>Anno</dt>
-          <dd>{project.year}</dd>
+  </a>
+  <div class="project-card__content">
+    <dl class="project-card__meta">
+      <div>
+        <dt>Progetto</dt>
+        <dd><a class="project-title-link" href={`/projects/${project.slug}/`}>{project.title}</a></dd>
+      </div>
+      <div>
+        <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
+        <dd><MetaLinks kind="student" value={project.student} /></dd>
+      </div>
+      <div>
+        <dt>Docente</dt>
+        <dd><MetaLinks kind="teacher" value={project.teacher} /></dd>
+      </div>
+      <div>
+        <dt>Anno</dt>
+        <dd><MetaLinks kind="year" value={project.year} /></dd>
       </div>
       <div class="project-card__course">
         <dt>Indirizzo</dt>
-        <dd>{project.course}</dd>
+        <dd><MetaLinks kind="course" value={project.course} /></dd>
       </div>
       {
         project.subject && (
           <div>
             <dt>Corso</dt>
-            <dd>{project.subject}</dd>
+            <dd><MetaLinks kind="subject" value={project.subject} /></dd>
           </div>
         )
       }
-      </dl>
+    </dl>
 
-      <p class="project-card__description">{description}</p>
-    </div>
-  </a>
+    <p class="project-card__description">{description}</p>
+  </div>
 </article>

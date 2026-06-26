@@ -1,0 +1,30 @@
+---
+import EntityArchive from "../../../components/EntityArchive.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import { courses, entitySlug, projectsByCourse, type Course } from "../../../data/projects";
+import "../../../styles/global.css";
+
+export function getStaticPaths() {
+  return courses.map((course) => ({
+    params: { slug: entitySlug(course) },
+    props: { course },
+  }));
+}
+
+const { course } = Astro.props as { course: Course };
+const courseProjects = projectsByCourse(course);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={`Progetti del corso ${course} nell’archivio ISIA Urbino Editorial Projects.`} />
+    <title>{course} — ISIA Urbino Editorial Projects</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <EntityArchive label="Corso" title={course} projects={courseProjects} />
+  </body>
+</html>

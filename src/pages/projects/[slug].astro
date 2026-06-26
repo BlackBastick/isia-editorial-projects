@@ -1,6 +1,7 @@
 ---
+import MetaLinks from "../../components/MetaLinks.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
-import { courseLabels, getProjectGallery, isVideo, projects, type Project } from "../../data/projects";
+import { courseLabels, entitySlug, getProjectGallery, isVideo, projects, type Project } from "../../data/projects";
 import "../../styles/global.css";
 
 export function getStaticPaths() {
@@ -34,7 +35,7 @@ const gallery = getProjectGallery(project);
         <nav class="breadcrumb" aria-label="Percorso">
           <a href="/">Projects</a>
           <span aria-hidden="true">›</span>
-          <a href={`/?course=${encodeURIComponent(project.course)}`}>{courseLabels[project.course]}</a>
+          <a href={`/corsi/${entitySlug(project.course)}/`}>{courseLabels[project.course]}</a>
         </nav>
         <dl>
           <div>
@@ -43,27 +44,27 @@ const gallery = getProjectGallery(project);
           </div>
           <div>
             <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
-            <dd>{project.student}</dd>
+            <dd><MetaLinks kind="student" value={project.student} /></dd>
           </div>
           {
             project.subject && (
               <div>
                 <dt>Corso</dt>
-                <dd>{project.subject}</dd>
+                <dd><MetaLinks kind="subject" value={project.subject} /></dd>
               </div>
             )
           }
           <div>
             <dt>Docente</dt>
-            <dd>{project.teacher}</dd>
+            <dd><MetaLinks kind="teacher" value={project.teacher} /></dd>
           </div>
           <div>
             <dt>Anno</dt>
-            <dd>{project.year}</dd>
+            <dd><MetaLinks kind="year" value={project.year} /></dd>
           </div>
           <div>
             <dt>Indirizzo</dt>
-            <dd>{project.course}</dd>
+            <dd><MetaLinks kind="course" value={project.course} /></dd>
           </div>
         </dl>
         <p>{project.description}</p>
