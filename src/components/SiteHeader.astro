@@ -129,9 +129,6 @@
         if (!animate || index === 0) return;
 
         const path = [{ x: source.left, y: source.top }];
-        if (isMobile && index > 0 && target.side === "left") {
-          path.push(place({ x: edgeInset, y: origin.y, side: "left" }, source));
-        }
         if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
           path.push(place({ x: right, y: origin.y, side: "top" }, source));
         }

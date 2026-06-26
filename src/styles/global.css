@@ -364,9 +364,9 @@ footer {
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 2.75em;
+  width: 7.5em;
   height: 18px;
-  background: linear-gradient(to right, transparent, var(--paper) 82%);
+  background: linear-gradient(to right, transparent, var(--paper) 72%);
   content: "";
   pointer-events: none;
 }
@@ -506,9 +506,14 @@ footer p {
     overflow: hidden;
   }
 
+  html {
+    background: transparent;
+  }
+
   body {
     display: flex;
     flex-direction: column;
+    background: transparent;
   }
 
   main {
@@ -531,16 +536,20 @@ footer p {
     align-items: flex-end;
   }
 
+  .filters {
+    display: none;
+  }
+
   .project-grid {
     grid-template-columns: 1fr;
   }
 
-  .filters {
-    flex: 1 1 auto;
-  }
-
   .filter {
     flex: 0 0 auto;
+  }
+
+  .project-card__description::after {
+    width: 8.5em;
   }
 
   .project-card__content {
