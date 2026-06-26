@@ -81,6 +81,7 @@
       const sideHeight = bottom - origin.y;
       const bottomWidth = right - origin.x;
       const perimeter = isMobile ? topWidth + sideHeight * 2 : topWidth + sideHeight * 2 + bottomWidth;
+      const mobileSideTop = origin.y + Math.max(18, sources[0].height);
 
       const pointAt = (distance: number) => {
         if (distance <= topWidth) return { x: origin.x + distance, y: origin.y, side: "top" };
@@ -96,14 +97,13 @@
       const mobilePoints = () => {
         const topCount = 10;
         const rightCount = 9;
-        const sideTop = origin.y + Math.max(18, sources[0].height);
-        const sideHeightInset = bottom - sideTop;
+        const sideHeightInset = bottom - mobileSideTop;
         return letters.map((_, index) => {
           if (index < topCount) {
             return { x: origin.x + (topWidth * index) / (topCount - 1), y: origin.y, side: "top" };
           }
           if (index < topCount + rightCount) {
-            return { x: right, y: sideTop + (sideHeightInset * (index - topCount)) / (rightCount - 1), side: "right" };
+            return { x: right, y: mobileSideTop + (sideHeightInset * (index - topCount)) / (rightCount - 1), side: "right" };
           }
           const leftIndex = index - topCount - rightCount;
           const leftCount = letters.length - topCount - rightCount;
@@ -128,7 +128,8 @@
 
         if (!animate || index === 0) return;
 
-        const path = [{ x: source.left, y: source.top }];
+        const startsOnLeft = isMobile && target.side === "left";
+        const path = [startsOnLeft ? place({ x: edgeInset, y: mobileSideTop, side: "left" }, source) : { x: source.left, y: source.top }];
         if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
           path.push(place({ x: right, y: origin.y, side: "top" }, source));
         }
