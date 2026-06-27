@@ -1,0 +1,22 @@
+---
+import EntityArchive from "../../components/EntityArchive.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import { projects } from "../../data/projects";
+import "../../styles/global.css";
+
+const workshopProjects = projects.filter((project) => project.subject?.toLowerCase().includes("workshop"));
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content="Workshop nell’archivio ISIA Urbino Editorial Projects." />
+    <title>Workshop — ISIA Urbino Editorial Projects</title>
+  </head>
+  <body>
+    <SiteHeader />
+    <EntityArchive label="Sezione" title="Workshop" projects={workshopProjects} />
+  </body>
+</html>

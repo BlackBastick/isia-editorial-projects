@@ -1,5 +1,14 @@
 ---
-import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "../data/projects";
+import { courses, entitySlug } from "../data/projects";
+
+const { hideMenuToggle = false } = Astro.props;
+
+const menuCourseLabels = {
+  [courses[0]]: "Triennio",
+  [courses[1]]: "Biennio Editoria",
+  [courses[2]]: "Biennio Fotografia",
+  [courses[3]]: "Biennio Illustrazione",
+};
 ---
 
 <header class="site-header">
@@ -12,11 +21,15 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
       )
     }
   </span>
-  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+  {
+    !hideMenuToggle && (
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    )
+  }
   <a class="site-frame-link" href="/" aria-label="Torna alla homepage">
     <span class="site-frame-link__top"></span>
     <span class="site-frame-link__right"></span>
@@ -28,19 +41,16 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
 <aside class="site-menu" id="site-menu" aria-hidden="true">
   <button class="menu-close" type="button" aria-label="Chiudi menu">×</button>
   <nav aria-label="Filtri archivio">
-    <a href="/">Tutti</a>
+    <a href="/">Tutti i progetti</a>
     <span aria-hidden="true">—</span>
     {
-      courses.map((course) => <a href={`/corsi/${entitySlug(course)}/`}>{courseLabels[course]}</a>)
+      courses.map((course) => <a href={`/corsi/${entitySlug(course)}/`}>{menuCourseLabels[course]}</a>)
     }
     <span aria-hidden="true">—</span>
-    {
-      uniqueSubjects().map((subject) => <a href={`/insegnamenti/${entitySlug(subject)}/`}>{subject}</a>)
-    }
+    <a href="/tesi-triennale/">Tesi triennale</a>
+    <a href="/tesi-magistrale/">Tesi magistrale</a>
     <span aria-hidden="true">—</span>
-    {
-      uniqueYears().map((year) => <a href={`/anni/${year}/`}>{year}</a>)
-    }
+    <a href="/workshop/">Workshop</a>
   </nav>
 </aside>
 
@@ -65,12 +75,27 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
   const menuToggle = document.querySelector<HTMLButtonElement>(".menu-toggle");
   const menuClose = document.querySelector<HTMLButtonElement>(".menu-close");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let relayoutLetters = (_animate = false) => {};
+  const syncHomeNavOffset = () => {
+    const navAnchor = document.querySelector<HTMLElement>(".home-nav, .entity-heading");
+    if (!navAnchor) return;
+    document.documentElement.style.setProperty("--home-nav-y", `${navAnchor.getBoundingClientRect().top}px`);
+  };
+
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  scrollTo(0, 0);
+  requestAnimationFrame(() => {
+    scrollTo(0, 0);
+    document.querySelector("main")?.scrollTo(0, 0);
+    syncHomeNavOffset();
+  });
 
   const setMenu = (open: boolean) => {
     document.documentElement.classList.toggle("has-menu-open", open);
     menu?.setAttribute("aria-hidden", String(!open));
     menuToggle?.setAttribute("aria-expanded", String(open));
     menuToggle?.setAttribute("aria-label", open ? "Chiudi menu" : "Apri menu");
+    if (open) requestAnimationFrame(() => relayoutLetters(true));
   };
 
   menuToggle?.addEventListener("click", () => setMenu(!document.documentElement.classList.contains("has-menu-open")));
@@ -95,8 +120,21 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
       width: visualViewport?.width ?? innerWidth,
       height: visualViewport?.height ?? innerHeight,
     };
-    const slot = 0.96 / letters.length;
-    const slots = [0, ...letters.slice(1).map((_, index) => (index + 1) * slot)];
+    const makeSlots = (spread = 0.96) => {
+      const weights = letters.slice(1).map((_, index) => {
+        const clustered = index % 5 === 0 || index % 7 === 2;
+        return clustered ? 0.45 + Math.random() * 0.25 : 0.9 + Math.random() * 1.15;
+      });
+      const total = weights.reduce((sum, weight) => sum + weight, 0);
+      let cursor = 0;
+      return [0, ...weights.map((weight) => (cursor += (weight / total) * spread))];
+    };
+    const makeMenuSlots = (spread = 0.96) => [
+      0,
+      ...letters.slice(1).map((_, index) => ((index + 1) / (letters.length - 1)) * spread),
+    ];
+    const slots = makeSlots();
+    const menuSlots = makeMenuSlots();
 
     const placeLetters = (animate = false) => {
       letters.forEach((letter) => letter.getAnimations().forEach((animation) => animation.cancel()));
@@ -154,7 +192,8 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
           return { x: edgeInset, y: bottom - (sideHeightInset * leftIndex) / (leftCount - 1), side: "left" };
         });
       };
-      const points = isMobile ? mobilePoints() : slots.map((slot) => pointAt(slot * perimeter));
+      const activeSlots = document.documentElement.classList.contains("has-menu-open") ? menuSlots : slots;
+      const points = isMobile ? mobilePoints() : activeSlots.map((slot) => pointAt(slot * perimeter));
       const place = (point: { x: number; y: number; side: string }, rect: { width: number; height: number }) => ({
         x: point.x - rect.width / 2,
         y: point.y - rect.height / 2,
@@ -172,8 +211,9 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
 
         if (!animate || index === 0) return;
 
+        const path = [{ x: source.left, y: source.top }];
         const startsOnLeft = isMobile && target.side === "left";
-        const path = [startsOnLeft ? place({ x: edgeInset, y: mobileSideTop, side: "left" }, source) : { x: source.left, y: source.top }];
+        if (startsOnLeft) path[0] = place({ x: edgeInset, y: mobileSideTop, side: "left" }, source);
         if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
           path.push(place({ x: right, y: origin.y, side: "top" }, source));
         }
@@ -205,7 +245,7 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
         });
       });
     };
-
+    relayoutLetters = placeLetters;
     let resizeFrame = 0;
     const resize = () => {
       cancelAnimationFrame(resizeFrame);
@@ -218,9 +258,13 @@ import { courseLabels, courses, entitySlug, uniqueSubjects, uniqueYears } from "
       setTimeout(() => {
         intro?.classList.add("is-leaving");
         placeLetters(true);
+        syncHomeNavOffset();
         setTimeout(() => intro?.remove(), 900);
       }, 1100);
-      if (!freezeMobileFrame) addEventListener("resize", resize);
+      if (!freezeMobileFrame) {
+        addEventListener("resize", resize);
+        addEventListener("resize", syncHomeNavOffset);
+      }
     }
   } else {
     intro?.remove();

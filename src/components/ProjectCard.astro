@@ -10,9 +10,11 @@ interface Props {
 const { project, index } = Astro.props;
 const description = project.description.replace(/\s+/g, " ").trim();
 const coverIsVideo = isVideo(project.image);
+const categoryText = [project.subject, project.title, project.description].join(" ").toLowerCase();
+const category = categoryText.includes("workshop") ? "workshop" : categoryText.includes("cake") || categoryText.includes("evento") ? "eventi" : "progetti";
 ---
 
-<article class="project-card" data-project data-course={project.course}>
+<article class="project-card" data-project data-course={project.course} data-category={category}>
   <a class="project-card__link" href={`/projects/${project.slug}/`} aria-label={`Apri il progetto ${project.title}`}>
     <div class="project-card__image">
       {

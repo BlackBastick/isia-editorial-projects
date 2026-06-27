@@ -17,9 +17,23 @@ import "../styles/global.css";
     <title>ISIA Urbino Editorial Projects</title>
   </head>
   <body>
-    <SiteHeader />
+    <SiteHeader hideMenuToggle />
 
     <main>
+      <div class="home-nav">
+        <nav class="home-tabs" aria-label="Filtra contenuti">
+          <button class="home-tab is-active" type="button" data-home-filter="all" aria-pressed="true">Tutto</button>
+          <button class="home-tab" type="button" data-home-filter="progetti" aria-pressed="false">Progetti</button>
+          <button class="home-tab" type="button" data-home-filter="workshop" aria-pressed="false">Workshop</button>
+          <button class="home-tab" type="button" data-home-filter="eventi" aria-pressed="false">Eventi</button>
+        </nav>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
       <section class="project-grid" aria-label="Progetti">
         {projects.map((project, index) => <ProjectCard project={project} index={index} />)}
       </section>
@@ -30,5 +44,23 @@ import "../styles/global.css";
       <p>Archivio indipendente a scopo didattico</p>
     </footer>
 
+    <script>
+      const homeTabs = [...document.querySelectorAll<HTMLButtonElement>("[data-home-filter]")];
+      const projectCards = [...document.querySelectorAll<HTMLElement>("[data-project]")];
+
+      homeTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const filter = tab.dataset.homeFilter;
+          homeTabs.forEach((item) => {
+            const active = item === tab;
+            item.classList.toggle("is-active", active);
+            item.setAttribute("aria-pressed", String(active));
+          });
+          projectCards.forEach((card) => {
+            card.hidden = filter !== "all" && card.dataset.category !== filter;
+          });
+        });
+      });
+    </script>
   </body>
 </html>
