@@ -232,22 +232,37 @@ const menuCourseLabels = {
             if (target.side === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
             if (target.side === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
           } else {
-            const nextEdge: Record<EdgeSide, { point: EdgePoint; side: EdgeSide }> = {
+            const clockwise: Record<EdgeSide, { point: EdgePoint; side: EdgeSide }> = {
               top: { point: { x: right, y: origin.y, side: "right" }, side: "right" },
               right: { point: { x: right, y: bottom, side: "bottom" }, side: "bottom" },
               bottom: { point: { x: edgeInset, y: bottom, side: "left" }, side: "left" },
               left: { point: { x: edgeInset, y: origin.y, side: "top" }, side: "top" },
             };
-            let currentSide = sourceSide;
-            for (let step = 0; currentSide !== target.side && step < 4; step += 1) {
-              const next = nextEdge[currentSide];
-              addWaypoint(path, next.point, source);
-              currentSide = next.side;
-            }
+            const counterClockwise: Record<EdgeSide, { point: EdgePoint; side: EdgeSide }> = {
+              top: { point: { x: edgeInset, y: origin.y, side: "left" }, side: "left" },
+              left: { point: { x: edgeInset, y: bottom, side: "bottom" }, side: "bottom" },
+              bottom: { point: { x: right, y: bottom, side: "right" }, side: "right" },
+              right: { point: { x: right, y: origin.y, side: "top" }, side: "top" },
+            };
+            const route = (edges: typeof clockwise) => {
+              const nextPath = [{ x: source.left, y: source.top }];
+              let currentSide = sourceSide;
+              for (let step = 0; currentSide !== target.side && step < 4; step += 1) {
+                const next = edges[currentSide];
+                addWaypoint(nextPath, next.point, source);
+                currentSide = next.side;
+              }
+              nextPath.push(target);
+              return nextPath;
+            };
+            const distance = (nextPath: { x: number; y: number }[]) =>
+              nextPath.slice(1).reduce((sum, point, pointIndex) =>
+                sum + Math.hypot(point.x - nextPath[pointIndex].x, point.y - nextPath[pointIndex].y), 0);
+            path.splice(0, path.length, ...[route(clockwise), route(counterClockwise)].sort((a, b) => distance(a) - distance(b))[0]);
           }
         }
 
-        path.push(target);
+        if (!samePoint(path[path.length - 1], target)) path.push(target);
 
         const distances = path.slice(1).map((point, pointIndex) =>
           Math.hypot(point.x - path[pointIndex].x, point.y - path[pointIndex].y)
