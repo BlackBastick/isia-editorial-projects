@@ -143,7 +143,7 @@ const menuCourseLabels = {
     };
     const makeNearbySlots = (previousSlots: number[], spread = 0.96) => {
       if (!previousSlots.length) return makeSlots(spread);
-      const minGap = spread / (letters.length - 1) * 0.25;
+      const minGap = spread / (letters.length - 1) * 0.45;
       const maxShift = 0.07;
       const next = previousSlots.map((slot, index) =>
         index === 0 ? 0 : Math.min(spread, Math.max(0, slot + (Math.random() - 0.5) * maxShift))
