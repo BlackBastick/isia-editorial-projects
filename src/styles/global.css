@@ -421,7 +421,7 @@ footer {
   position: absolute;
   z-index: 2;
   top: 0;
-  right: calc((var(--home-tab-size) * 2) + var(--space-md));
+  right: calc(var(--home-tab-size) + 0.45rem);
   left: 0;
   display: grid;
   gap: 0.35rem;
@@ -451,11 +451,6 @@ footer {
   line-height: 1;
   text-transform: uppercase;
   outline: 0;
-}
-
-.home-search input:focus-visible {
-  outline: 1px solid var(--ink);
-  outline-offset: -1px;
 }
 
 .home-search input::placeholder {
@@ -498,6 +493,12 @@ footer {
 
 .home-search__tags .home-tab {
   border: 1px solid var(--ink);
+}
+
+.home-search__tags .home-tab.is-active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .archive-toolbar {
@@ -853,6 +854,11 @@ footer p {
     left: var(--page-gutter);
   }
 
+  .has-search-open .menu-toggle {
+    opacity: 0;
+    pointer-events: none;
+  }
+
   .home-nav .menu-toggle {
     top: var(--home-nav-center-y);
     right: var(--page-gutter);
@@ -869,6 +875,16 @@ footer p {
     display: block;
     padding: var(--home-nav-y) var(--page-gutter) var(--space-xl);
     overflow-y: auto;
+  }
+
+  .home-search.is-results {
+    position: absolute;
+    z-index: 2;
+    inset: auto calc(var(--home-tab-size) + 0.45rem) auto 0;
+    display: grid;
+    gap: 0.35rem;
+    padding: 0;
+    overflow: visible;
   }
 
   .home-search__bar {

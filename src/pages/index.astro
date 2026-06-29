@@ -4,7 +4,7 @@ import SiteHeader from "../components/SiteHeader.astro";
 import { projects } from "../data/projects";
 import "../styles/global.css";
 
-const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? []))].slice(0, 12);
+const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? []))];
 ---
 
 <!doctype html>
@@ -71,6 +71,7 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
       const searchInput = document.querySelector<HTMLInputElement>("[data-search-input]");
       const searchTags = [...document.querySelectorAll<HTMLButtonElement>("[data-search-tag]")];
       let activeFilter = "all";
+      const mobileSearchQuery = matchMedia("(max-width: 42rem)");
 
       const normalize = (value: string) =>
         value
@@ -78,6 +79,27 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
           .replace(/[\u0300-\u036f]/g, "")
           .toLowerCase()
           .trim();
+
+      const updateTags = () => {
+        const query = normalize(searchInput?.value ?? "");
+        const related = new Set<string>();
+        projectCards.forEach((card) => {
+          const haystack = normalize(card.dataset.search ?? "");
+          const tags = (card.dataset.tags ?? "").split("|").filter(Boolean);
+          if (!query || haystack.includes(query) || tags.some((tag) => normalize(tag).includes(query))) {
+            tags.forEach((tag) => related.add(tag));
+          }
+        });
+        let visible = 0;
+        searchTags.forEach((tag) => {
+          const value = tag.dataset.searchTag ?? "";
+          const normalized = normalize(value);
+          const show = query ? related.has(value.toLowerCase()) || normalized.includes(query) : visible < 12;
+          tag.hidden = !show;
+          tag.classList.toggle("is-active", Boolean(query) && normalized === query);
+          if (show) visible += 1;
+        });
+      };
 
       const applyProjects = () => {
         const searching = homeNav?.classList.contains("has-search-open");
@@ -87,6 +109,8 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
           const matchesSearch = !query || normalize(card.dataset.search ?? "").includes(query);
           card.hidden = searching ? !matchesSearch : !matchesFilter;
         });
+        searchPanel?.classList.toggle("is-results", mobileSearchQuery.matches && Boolean(query));
+        updateTags();
       };
 
       const setSearch = (open: boolean) => {
