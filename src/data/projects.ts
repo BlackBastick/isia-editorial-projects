@@ -23,7 +23,6 @@ export type Project = {
   year: number;
   course: Course;
   subject?: string;
-  summary?: string;
   description: string;
   tags?: string[];
   image: string;
@@ -75,8 +74,6 @@ export const projects: Project[] = [
     year: 2026,
     course: courses[1],
     subject: "Metodologia della progettazione",
-    summary:
-      "Un’installazione che rende visibile l’inquinamento digitale prodotto dal gesto dello scroll.",
     tags: ["installazione", "digitale", "interazione", "ambiente"],
     description:
       "48,49 kg di CO₂ all’anno. È quello che produce in media ogni utente di TikTok.\n\nTracing Gestures è un’installazione che rende visibile questo inquinamento. Per ogni secondo trascorso a scrollare, una macchina rilasciava inchiostro in una vasca d’acqua.\n\nI visitatori hanno attraversato due sale: nella prima, venivano accolti da un manifesto interattivo dove il gesto dello scroll, compiuto davanti ad una webcam che riconosceva il movimento del dito, rendeva il testo progressivamente illeggibile. Nella seconda, ognuno poteva attivare la macchina in prima persona, utilizzando un telefono dedicato con TikTok aperto e stampando così una traccia concreta del proprio impatto. Alla fine, attraverso la tecnica giapponese del suminagashi, veniva realizzata una stampa unica che restituiva una traccia di quell’interazione.",
@@ -123,8 +120,6 @@ export const projects: Project[] = [
     year: 2026,
     course: courses[3],
     subject: "Workshop",
-    summary:
-      "Un workshop dedicato alla narrazione diaristica attraverso illustrazione, fumetto e scrittura.",
     tags: ["workshop", "fumetto", "illustrazione", "scrittura", "diario"],
     description:
       "ISIA U Training Days 2026\n21.04—23.04.2026\n\nCon Sara Colaone, a cura di Federica Alma Iacobelli e Silvana Sola. Riservato al Biennio in Comunicazione Visiva e Design per l’Editoria: Illustrazione.\n\nIl workshop ha esplorato le potenzialità dell’illustrazione, del fumetto e della scrittura come strumenti per costruire una narrazione in forma diaristica, intrecciando immagini e parole, testi originali e/o citati.\n\nA partire dall’osservazione del reale, le studentesse hanno sviluppato un percorso progettuale che ha attraversato diverse fasi: storyboard delle tavole, impaginazione e presentazione finale degli elaborati.",
