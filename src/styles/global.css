@@ -1,7 +1,7 @@
 @font-face {
   font-family: "Halyard Display Book Local";
   src: url("../../Halyard/fonnts.com-Halyard_Display_Book.otf") format("opentype");
-  font-display: swap;
+  font-display: block;
   font-style: normal;
   font-weight: 400;
 }
@@ -9,7 +9,7 @@
 @font-face {
   font-family: "Halyard Display Regular Local";
   src: url("../../Halyard/fonnts.com-Halyard_Display_Regular.otf") format("opentype");
-  font-display: swap;
+  font-display: block;
   font-style: normal;
   font-weight: 400;
 }
@@ -705,6 +705,20 @@ footer p {
     background: var(--paper);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .project-detail-page,
+  .project-detail-page body {
+    height: auto;
+    overflow: auto;
+  }
+
+  .project-detail-page body {
+    display: block;
+  }
+
+  .project-detail-page main {
+    overflow: visible;
   }
 
   .site-header {
