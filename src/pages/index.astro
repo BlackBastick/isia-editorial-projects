@@ -1,5 +1,6 @@
 ---
 import ProjectCard from "../components/ProjectCard.astro";
+import SeoHead from "../components/SeoHead.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { projects } from "../data/projects";
 import "../styles/global.css";
@@ -10,13 +11,7 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
 <!doctype html>
 <html lang="it">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta
-      name="description"
-      content="Archivio indipendente dei progetti editoriali, fotografici e di illustrazione degli studenti ISIA Urbino."
-    />
-    <title>ISIA Urbino Editorial Projects</title>
+    <SeoHead />
   </head>
   <body>
     <SiteHeader hideMenuToggle />

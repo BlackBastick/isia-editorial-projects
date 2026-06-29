@@ -1,5 +1,6 @@
 ---
 import EntityArchive from "../../../components/EntityArchive.astro";
+import SeoHead from "../../../components/SeoHead.astro";
 import SiteHeader from "../../../components/SiteHeader.astro";
 import { entitySlug, projectsByStudent, uniqueStudents } from "../../../data/projects";
 import "../../../styles/global.css";
@@ -18,10 +19,7 @@ const studentProjects = projectsByStudent(student);
 <!doctype html>
 <html lang="it">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={`Progetti di ${student} nell’archivio ISIA Urbino Editorial Projects.`} />
-    <title>{student} — ISIA Urbino Editorial Projects</title>
+    <SeoHead title={`${student} — ISIA Urbino Editorial Projects`} description={`Progetti di ${student} nell’archivio ISIA Urbino Editorial Projects.`} pathname={`/studenti/${entitySlug(student)}/`} />
   </head>
   <body>
     <SiteHeader />

@@ -1,5 +1,6 @@
 ---
 import EntityArchive from "../../components/EntityArchive.astro";
+import SeoHead from "../../components/SeoHead.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import { projects } from "../../data/projects";
 import "../../styles/global.css";
@@ -10,10 +11,7 @@ const tesiProjects = projects.filter((project) => project.subject?.toLowerCase()
 <!doctype html>
 <html lang="it">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="Tesi magistrali nell’archivio ISIA Urbino Editorial Projects." />
-    <title>Tesi magistrale — ISIA Urbino Editorial Projects</title>
+    <SeoHead title="Tesi magistrale — ISIA Urbino Editorial Projects" description="Tesi magistrali nell’archivio ISIA Urbino Editorial Projects." pathname="/tesi-magistrale/" />
   </head>
   <body>
     <SiteHeader />

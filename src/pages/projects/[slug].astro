@@ -1,5 +1,6 @@
 ---
 import MetaLinks from "../../components/MetaLinks.astro";
+import SeoHead from "../../components/SeoHead.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import { courseLabels, entitySlug, getProjectGallery, isVideo, projects, type Project } from "../../data/projects";
 import "../../styles/global.css";
@@ -25,10 +26,13 @@ const teacherLabel = isWorkshop ? "A cura di" : "Docente";
 <!doctype html>
 <html lang="it">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={project.description} />
-    <title>{project.title} — ISIA Urbino Editorial Projects</title>
+    <SeoHead
+      title={`${project.title} — ISIA Urbino Editorial Projects`}
+      description={project.description}
+      pathname={`/projects/${project.slug}/`}
+      image={isVideo(project.image) ? undefined : project.image}
+      type="article"
+    />
   </head>
   <body>
     <SiteHeader />

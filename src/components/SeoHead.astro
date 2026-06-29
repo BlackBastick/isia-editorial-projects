@@ -1,0 +1,47 @@
+---
+const siteName = "ISIA Urbino Editorial Projects";
+const siteUrl = "https://isiaueditorialprojects.netlify.app";
+const defaultDescription =
+  "Archivio indipendente dei progetti editoriali, fotografici e di illustrazione degli studenti ISIA Urbino.";
+const defaultImage = "/images/tracing-gestures/01.jpg";
+
+interface Props {
+  title?: string;
+  description?: string;
+  pathname?: string;
+  image?: string;
+  type?: "website" | "article";
+}
+
+const {
+  title = siteName,
+  description = defaultDescription,
+  pathname = Astro.url.pathname,
+  image = defaultImage,
+  type = "website",
+} = Astro.props;
+
+const cleanDescription = description.replace(/\s+/g, " ").trim();
+const metaDescription =
+  cleanDescription.length > 170 ? `${cleanDescription.slice(0, 167).trim()}...` : cleanDescription;
+const canonical = new URL(pathname, siteUrl).href;
+const imageUrl = new URL(image, siteUrl).href;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<title>{title}</title>
+<meta name="description" content={metaDescription} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="it_IT" />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={metaDescription} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={metaDescription} />
+<meta name="twitter:image" content={imageUrl} />
