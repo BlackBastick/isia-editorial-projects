@@ -15,9 +15,10 @@ const category = categoryText.includes("workshop") ? "workshop" : categoryText.i
 const isWorkshop = category === "workshop";
 const participantLabel = isWorkshop ? "Partecipanti" : project.student.includes(",") ? "Studenti" : "Studente";
 const teacherLabel = isWorkshop ? "A cura di" : "Docente";
+const searchText = [project.title, ...(project.tags ?? [])].join(" ").toLowerCase();
 ---
 
-<article class="project-card" data-project data-course={project.course} data-category={category}>
+<article class="project-card" data-project data-course={project.course} data-category={category} data-search={searchText}>
   <a class="project-card__link" href={`/projects/${project.slug}/`} aria-label={`Apri il progetto ${project.title}`}>
     <div class="project-card__image">
       {

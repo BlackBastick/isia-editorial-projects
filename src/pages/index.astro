@@ -3,6 +3,8 @@ import ProjectCard from "../components/ProjectCard.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { projects } from "../data/projects";
 import "../styles/global.css";
+
+const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? []))].slice(0, 12);
 ---
 
 <!doctype html>
@@ -27,6 +29,21 @@ import "../styles/global.css";
           <button class="home-tab" type="button" data-home-filter="workshop" aria-pressed="false">Workshop</button>
           <button class="home-tab" type="button" data-home-filter="eventi" aria-pressed="false">Eventi</button>
         </nav>
+        <section class="home-search" id="home-search" data-home-search hidden aria-label="Ricerca progetti">
+          <div class="home-search__bar">
+            <label class="sr-only" for="project-search">Cerca progetto o tag</label>
+            <input id="project-search" type="search" autocomplete="off" placeholder="Cerca titolo o tag" data-search-input />
+            <button class="home-tab home-search__back" type="button" data-search-close>Indietro</button>
+          </div>
+          <div class="home-search__tags" aria-label="Tag consigliati">
+            {suggestedTags.map((tag) => <button class="home-tab" type="button" data-search-tag={tag}>{tag}</button>)}
+          </div>
+        </section>
+        <button class="search-toggle" type="button" aria-expanded="false" aria-controls="home-search" aria-label="Apri ricerca">
+          <svg viewBox="0 0 60 60" aria-hidden="true" focusable="false">
+            <path d="M57.3,54.3l-16.3-16.4c3.2-3.9,5-8.7,5-13.9,0-12-9.7-21.7-21.7-21.7S2.7,12,2.7,24s9.7,21.7,21.7,21.7,9.2-1.5,12.9-4.3l16.5,16.3,3.5-3.4ZM24.4,42.6c-10.3,0-18.7-8.4-18.7-18.7S14.1,5.3,24.4,5.3s18.7,8.4,18.7,18.7-2.7,11.3-7.3,14.8c-3.3,2.5-7.2,3.8-11.3,3.8Z" />
+          </svg>
+        </button>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
           <span></span>
           <span></span>
@@ -47,19 +64,68 @@ import "../styles/global.css";
     <script>
       const homeTabs = [...document.querySelectorAll<HTMLButtonElement>("[data-home-filter]")];
       const projectCards = [...document.querySelectorAll<HTMLElement>("[data-project]")];
+      const homeNav = document.querySelector<HTMLElement>(".home-nav");
+      const searchPanel = document.querySelector<HTMLElement>("[data-home-search]");
+      const searchToggle = document.querySelector<HTMLButtonElement>(".search-toggle");
+      const searchClose = document.querySelector<HTMLButtonElement>("[data-search-close]");
+      const searchInput = document.querySelector<HTMLInputElement>("[data-search-input]");
+      const searchTags = [...document.querySelectorAll<HTMLButtonElement>("[data-search-tag]")];
+      let activeFilter = "all";
+
+      const normalize = (value: string) =>
+        value
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .trim();
+
+      const applyProjects = () => {
+        const searching = homeNav?.classList.contains("has-search-open");
+        const query = normalize(searchInput?.value ?? "");
+        projectCards.forEach((card) => {
+          const matchesFilter = activeFilter === "all" || card.dataset.category === activeFilter;
+          const matchesSearch = !query || normalize(card.dataset.search ?? "").includes(query);
+          card.hidden = searching ? !matchesSearch : !matchesFilter;
+        });
+      };
+
+      const setSearch = (open: boolean) => {
+        homeNav?.classList.toggle("has-search-open", open);
+        document.documentElement.classList.toggle("has-search-open", open);
+        searchPanel?.toggleAttribute("hidden", !open);
+        searchToggle?.setAttribute("aria-expanded", String(open));
+        if (open) {
+          requestAnimationFrame(() => searchInput?.focus());
+        } else {
+          if (searchInput) searchInput.value = "";
+        }
+        applyProjects();
+      };
 
       homeTabs.forEach((tab) => {
         tab.addEventListener("click", () => {
-          const filter = tab.dataset.homeFilter;
+          activeFilter = tab.dataset.homeFilter ?? "all";
           homeTabs.forEach((item) => {
             const active = item === tab;
             item.classList.toggle("is-active", active);
             item.setAttribute("aria-pressed", String(active));
           });
-          projectCards.forEach((card) => {
-            card.hidden = filter !== "all" && card.dataset.category !== filter;
-          });
+          applyProjects();
         });
+      });
+
+      searchToggle?.addEventListener("click", () => setSearch(true));
+      searchClose?.addEventListener("click", () => setSearch(false));
+      searchInput?.addEventListener("input", applyProjects);
+      searchTags.forEach((tag) => {
+        tag.addEventListener("click", () => {
+          if (searchInput) searchInput.value = tag.dataset.searchTag ?? "";
+          applyProjects();
+          searchInput?.focus();
+        });
+      });
+      addEventListener("keydown", (event) => {
+        if (event.key === "Escape") setSearch(false);
       });
     </script>
   </body>

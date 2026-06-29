@@ -25,6 +25,7 @@ export type Project = {
   subject?: string;
   summary?: string;
   description: string;
+  tags?: string[];
   image: string;
   imageAlt: string;
   gallery?: string[];
@@ -76,6 +77,7 @@ export const projects: Project[] = [
     subject: "Metodologia della progettazione",
     summary:
       "Un’installazione che rende visibile l’inquinamento digitale prodotto dal gesto dello scroll.",
+    tags: ["installazione", "digitale", "interazione", "ambiente"],
     description:
       "48,49 kg di CO₂ all’anno. È quello che produce in media ogni utente di TikTok.\n\nTracing Gestures è un’installazione che rende visibile questo inquinamento. Per ogni secondo trascorso a scrollare, una macchina rilasciava inchiostro in una vasca d’acqua.\n\nI visitatori hanno attraversato due sale: nella prima, venivano accolti da un manifesto interattivo dove il gesto dello scroll, compiuto davanti ad una webcam che riconosceva il movimento del dito, rendeva il testo progressivamente illeggibile. Nella seconda, ognuno poteva attivare la macchina in prima persona, utilizzando un telefono dedicato con TikTok aperto e stampando così una traccia concreta del proprio impatto. Alla fine, attraverso la tecnica giapponese del suminagashi, veniva realizzata una stampa unica che restituiva una traccia di quell’interazione.",
     image: "/images/tracing-gestures/01.jpg",
@@ -90,6 +92,7 @@ export const projects: Project[] = [
     year: 2025,
     course: courses[1],
     subject: "Progettazione per l’Editoria",
+    tags: ["evento", "libro", "performance", "editoria"],
     description:
       "Lunedì 24 febbraio, durante l’evento “Cake as book as artwork”, Lucia Franceschini e Alberto Guglielmi hanno celebrato otto libri d’artista che mostrano l’evoluzione del rapporto tra performance e medium fotografico, che da strumento di documentazione diviene spazio performativo.\n\nI libri d’artista presentati e raccontati da Lucia e Alberto, non sono stati sfogliati o letti, ma tagliati, serviti e mangiati. Una celebrazione in cui il libro d’artista è stato al centro di un’esperienza sensoriale totale, che si è dissolta nel momento stesso del suo consumo.",
     image: "/images/cake-as-book/01.jpg",
@@ -104,6 +107,7 @@ export const projects: Project[] = [
     year: 2026,
     course: courses[1],
     subject: "Metodologia della progettazione",
+    tags: ["installazione", "suono", "archivio", "clima"],
     description:
       "L’eco del tempo è un’installazione e un ambiente sonoro responsivo dedicato alla memoria climatica dell’Osservatorio Serpieri di Urbino, fondato da Padre Alessandro Serpieri e attivo nella raccolta di dati dal 1850. Il progetto parte dall’osservazione di una disunione: ogni luogo conserva una storia fatta di medie, estremi, ricorrenze e anomalie, ma questa memoria resta fuori dal linguaggio quotidiano e dalla percezione condivisa. Attraverso suono, immagine, documenti e materiali editoriali, l’installazione riporta quella memoria nel presente e trasforma serie storiche e annotazioni in esperienza sensibile.\n\nLo spazio si articola in due ambienti. Il primo introduce il contesto attraverso un volume edito in occasione della mostra, materiali d’archivio e una lettera originale del 1850. Il secondo ospita una macchina sonora che traduce i dati dell’Osservatorio in variazioni musicali, eseguite in una performance ciclica. La performance prende la forma di una suite di 100 minuti, basata su una composizione originale e modulata dai dati meteo.\n\nL’attivazione e la performance hanno lo scopo di rendere di nuovo percepibile ciò che resta confinato nei registri e nei grafici: una memoria lunga e continua, che attraversa quasi due secoli e torna a essere qualcosa che si percepisce e ritorna nel discorso.\n\nPrima dell’inizio della performance ha avuto luogo una breve introduzione ai temi della climatologia e al lavoro dell’osservatorio Serpieri a cura del Prof. Umberto Giostra, direttore dell’Osservatorio e Professore associato a Uniurb di Fisica del clima e a cura di Piero Paolucci, osservatore e resposabile dell’Osservatorio dal 1990.",
     image: "/images/leco-del-tempo/01.jpg",
@@ -121,6 +125,7 @@ export const projects: Project[] = [
     subject: "Workshop",
     summary:
       "Un workshop dedicato alla narrazione diaristica attraverso illustrazione, fumetto e scrittura.",
+    tags: ["workshop", "fumetto", "illustrazione", "scrittura", "diario"],
     description:
       "ISIA U Training Days 2026\n21.04—23.04.2026\n\nCon Sara Colaone, a cura di Federica Alma Iacobelli e Silvana Sola. Riservato al Biennio in Comunicazione Visiva e Design per l’Editoria: Illustrazione.\n\nIl workshop ha esplorato le potenzialità dell’illustrazione, del fumetto e della scrittura come strumenti per costruire una narrazione in forma diaristica, intrecciando immagini e parole, testi originali e/o citati.\n\nA partire dall’osservazione del reale, le studentesse hanno sviluppato un percorso progettuale che ha attraversato diverse fasi: storyboard delle tavole, impaginazione e presentazione finale degli elaborati.",
     image: "/images/diario-a-fumetti/01.jpg",
@@ -135,6 +140,7 @@ export const projects: Project[] = [
     year: 2025,
     course: courses[1],
     subject: "Progettazione grafica dell'immagine 2",
+    tags: ["fotografia", "libro", "paesaggio", "editoria"],
     description:
       "(Only Two) Open Windows osserva tre complessi residenziali sul mare tra Marotta e Senigallia, raccontando il rapporto tra architettura, paesaggio costiero e vita stagionale.\n\nAttraverso finestre aperte, balconi chiusi, superfici consumate e tracce quotidiane, il progetto indaga edifici pensati per abitare un margine instabile: quello tra interno ed esterno, presenza e assenza, privato e pubblico.",
     image: "/images/only-two/01.mp4",
@@ -149,6 +155,7 @@ export const projects: Project[] = [
     year: 2025,
     course: courses[2],
         subject: "Tesi magistrale in Fotografia",
+    tags: ["tesi", "fotografia", "nave", "spettacolo"],
     description:
       "“Back to the real life” è una ricerca visiva che esplora una nave da crociera come macchina da spettacolo. Attraverso l’analisi di scenografie, storie e spazi dietro le quinte, il progetto mette in luce come la nave crei un mondo parallelo e condiviso, dove la realtà quotidiana lascia spazio a un’esperienza collettiva e teatrale.",
     image:
@@ -165,6 +172,7 @@ export const projects: Project[] = [
     year: 2025,
     course: courses[3],
             subject: "Tesi magistrale in Illustrazione",
+    tags: ["tesi", "illustrazione", "tempo", "libro"],
     description:
       "Il concetto di tempo è uno dei temi più affascinanti e complessi affrontati dalla filosofia e dalla scienza. Esso permea ogni aspetto della nostra esistenza, scandendo i ritmi della vita quotidiana e influenzando profondamente la nostra percezione del mondo.\n\nL'obiettivo della ricerca è quello di investigare le implicazioni di un tempo non ordinato, esaminando come ciò influenzerebbe la nostra percezione della realtà e la nostra comprensione dell’universo. L’intento è quello di fornire una comprensione teorica e una visione tangibile di un immaginario dove il prima e il poi si dissolvono in un flusso di eventi interconnessi.",
     image:
@@ -180,6 +188,7 @@ export const projects: Project[] = [
     year: 2024,
     course: courses[1],
     subject: "Tesi magistrale in Editoria",
+    tags: ["tesi", "editoria", "identità", "linguaggio"],
     description:
       "“Non-binary society, Binary barriers” esplora le identità non binarie e le barriere culturali e sociali che le attraversano nella società contemporanea. Attraverso una tavola rotonda con studentesse e studenti della facoltà di Gender Studies dell’Università di Innsbruck, il progetto raccoglie esperienze, prospettive e sfide vissute.\n\nLa ricerca riflette sul linguaggio e sulla rappresentazione, evidenziandone il potenziale trasformativo nella costruzione di spazi più inclusivi, e affronta le intersezioni tra identità, cultura e linguaggio in un’ottica intersezionale.",
     image:
@@ -195,6 +204,7 @@ export const projects: Project[] = [
     year: 2026,
     course: courses[0],
     subject: "Grafica editoriale",
+    tags: ["libro", "grafica editoriale", "territorio", "transizione"],
     description:
       "Il progetto editoriale mira a sottolineare la trasformazione del territorio dell’Alta Tuscia, attraverso un’immaginario che faccia emergere la frammentazione e la perdita delle origini di questi luoghi.\n\nPaesaggio Residuo è un progetto di ricerca a cura di Leonardo Metz che esplora la decostruzione dell’inquinamento acustico legato alle energie rinnovabili, come la transizione energetica ridisegni non solo l’ambiente, ma anche l’identità sociale della vita provinciale e la memoria dei luoghi.",
     image:
@@ -202,7 +212,7 @@ export const projects: Project[] = [
     imageAlt: "Mano che scrive su un quaderno aperto",
      gallery: ["/images/territorio-e-transizione/01.mp4", ...gallery("territorio-e-transizione", 7).slice(1)],
   },
-];
+].sort((a, b) => b.year - a.year);
 
 export function getProjectGallery(project: Project) {
   return project.gallery ?? [project.image];
