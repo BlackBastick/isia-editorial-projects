@@ -143,11 +143,14 @@ const menuCourseLabels = {
     };
     const makeNearbySlots = (previousSlots: number[], spread = 0.96) => {
       if (!previousSlots.length) return makeSlots(spread);
-      const minGap = spread / (letters.length - 1) * 0.45;
-      const maxShift = 0.07;
-      const next = previousSlots.map((slot, index) =>
-        index === 0 ? 0 : Math.min(spread, Math.max(0, slot + (Math.random() - 0.5) * maxShift))
-      );
+      const step = spread / (letters.length - 1);
+      const minGap = step * 0.45;
+      const next = previousSlots.map((slot, index) => {
+        if (index === 0) return 0;
+        const anchor = index * step;
+        const targetSlot = Math.min(spread, Math.max(0, anchor + (Math.random() - 0.5) * step * 1.2));
+        return slot * 0.35 + targetSlot * 0.65;
+      });
       for (let index = next.length - 1; index > 0; index -= 1) {
         next[index] = Math.min(next[index], spread - (next.length - 1 - index) * minGap);
       }
@@ -242,10 +245,18 @@ const menuCourseLabels = {
 
         if (sourceSide !== target.side) {
           if (isMobile) {
-            if (sourceSide === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
-            if (sourceSide === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
-            if (target.side === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
-            if (target.side === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
+            if (sourceSide === "right" && target.side === "left") {
+              addWaypoint(path, { x: right, y: bottom, side: "right" }, source);
+              addWaypoint(path, { x: edgeInset, y: bottom, side: "left" }, source);
+            } else if (sourceSide === "left" && target.side === "right") {
+              addWaypoint(path, { x: edgeInset, y: bottom, side: "left" }, source);
+              addWaypoint(path, { x: right, y: bottom, side: "right" }, source);
+            } else {
+              if (sourceSide === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
+              if (sourceSide === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
+              if (target.side === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
+              if (target.side === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
+            }
           } else {
             const clockwise: Record<EdgeSide, { point: EdgePoint; side: EdgeSide }> = {
               top: { point: { x: right, y: origin.y, side: "right" }, side: "right" },
