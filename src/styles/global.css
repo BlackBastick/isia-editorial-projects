@@ -485,6 +485,13 @@ footer {
   line-height: 18px;
 }
 
+.home-nav.has-search-open:has(.home-search__status:not([hidden])) .search-toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: none;
+}
+
 .home-nav .menu-toggle {
   position: fixed;
   top: var(--home-nav-center-y);
@@ -907,7 +914,7 @@ footer p {
   .home-search.is-results {
     position: absolute;
     z-index: 2;
-    inset: auto 0 auto 0;
+    inset: 0 0 auto 0;
     display: grid;
     gap: 0.35rem;
     padding: 0;
