@@ -12,6 +12,9 @@ const description = project.description.replace(/\s+/g, " ").trim();
 const coverIsVideo = isVideo(project.image);
 const categoryText = [project.subject, project.title, project.description].join(" ").toLowerCase();
 const category = categoryText.includes("workshop") ? "workshop" : categoryText.includes("cake") || categoryText.includes("evento") ? "eventi" : "progetti";
+const isWorkshop = category === "workshop";
+const participantLabel = isWorkshop ? "Partecipanti" : project.student.includes(",") ? "Studenti" : "Studente";
+const teacherLabel = isWorkshop ? "A cura di" : "Docente";
 ---
 
 <article class="project-card" data-project data-course={project.course} data-category={category}>
@@ -40,11 +43,19 @@ const category = categoryText.includes("workshop") ? "workshop" : categoryText.i
         <dd><a class="project-title-link" href={`/projects/${project.slug}/`}>{project.title}</a></dd>
       </div>
       <div>
-        <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
-        <dd><MetaLinks kind="student" value={project.student} /></dd>
+        <dt>{participantLabel}</dt>
+        <dd>{isWorkshop ? <MetaLinks kind="course" value={project.course} /> : <MetaLinks kind="student" value={project.student} />}</dd>
       </div>
+      {
+        project.guest && (
+          <div>
+            <dt>Ospite</dt>
+            <dd>{project.guest}</dd>
+          </div>
+        )
+      }
       <div>
-        <dt>Docente</dt>
+        <dt>{teacherLabel}</dt>
         <dd><MetaLinks kind="teacher" value={project.teacher} /></dd>
       </div>
       <div>

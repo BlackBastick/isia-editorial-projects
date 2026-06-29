@@ -17,6 +17,9 @@ interface Props {
 
 const { project } = Astro.props;
 const gallery = getProjectGallery(project);
+const isWorkshop = project.subject?.toLowerCase().includes("workshop");
+const participantLabel = isWorkshop ? "Partecipanti" : project.student.includes(",") ? "Studenti" : "Studente";
+const teacherLabel = isWorkshop ? "A cura di" : "Docente";
 ---
 
 <!doctype html>
@@ -43,8 +46,8 @@ const gallery = getProjectGallery(project);
             <dd>{project.title}</dd>
           </div>
           <div>
-            <dt>{project.student.includes(",") ? "Studenti" : "Studente"}</dt>
-            <dd><MetaLinks kind="student" value={project.student} /></dd>
+            <dt>{participantLabel}</dt>
+            <dd>{isWorkshop ? <MetaLinks kind="course" value={project.course} /> : <MetaLinks kind="student" value={project.student} />}</dd>
           </div>
           {
             project.subject && (
@@ -54,8 +57,16 @@ const gallery = getProjectGallery(project);
               </div>
             )
           }
+          {
+            project.guest && (
+              <div>
+                <dt>Ospite</dt>
+                <dd>{project.guest}</dd>
+              </div>
+            )
+          }
           <div>
-            <dt>Docente</dt>
+            <dt>{teacherLabel}</dt>
             <dd><MetaLinks kind="teacher" value={project.teacher} /></dd>
           </div>
           <div>

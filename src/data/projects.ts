@@ -1,5 +1,5 @@
 export const courses = [
-  "Triennio — Progettazione grafica e Comunicazione visiva",
+  "Triennio — Progettazione grafica",
   "Biennio — Editoria",
   "Biennio — Fotografia",
   "Biennio — Illustrazione",
@@ -19,6 +19,7 @@ export type Project = {
   title: string;
   student: string;
   teacher: string;
+  guest?: string;
   year: number;
   course: Course;
   subject?: string;
@@ -41,7 +42,9 @@ export const entitySlug = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-export const uniqueStudents = () => [...new Set(projects.flatMap((project) => splitNames(project.student)))];
+const isWorkshopProject = (project: Project) => project.subject?.toLowerCase().includes("workshop");
+
+export const uniqueStudents = () => [...new Set(projects.filter((project) => !isWorkshopProject(project)).flatMap((project) => splitNames(project.student)))];
 
 export const uniqueTeachers = () => [...new Set(projects.flatMap((project) => splitNames(project.teacher)))];
 
@@ -49,7 +52,7 @@ export const uniqueSubjects = () => [...new Set(projects.flatMap((project) => pr
 
 export const uniqueYears = () => [...new Set(projects.map((project) => project.year))].sort((a, b) => b - a);
 
-export const projectsByStudent = (student: string) => projects.filter((project) => splitNames(project.student).includes(student));
+export const projectsByStudent = (student: string) => projects.filter((project) => !isWorkshopProject(project) && splitNames(project.student).includes(student));
 
 export const projectsByTeacher = (teacher: string) => projects.filter((project) => splitNames(project.teacher).includes(teacher));
 
@@ -106,6 +109,23 @@ export const projects: Project[] = [
     image: "/images/leco-del-tempo/01.jpg",
     imageAlt: "Libro fotografico aperto su una pagina dedicata al paesaggio",
     gallery: gallery("leco-del-tempo", 14),
+  },
+  {
+    slug: "diario-a-fumetti",
+    title: "Diario a fumetti",
+    student: "Biennio — Illustrazione",
+    teacher: "Federica Alma Iacobelli, Silvana Sola",
+    guest: "Sara Colaone",
+    year: 2026,
+    course: courses[3],
+    subject: "Workshop",
+    summary:
+      "Un workshop dedicato alla narrazione diaristica attraverso illustrazione, fumetto e scrittura.",
+    description:
+      "ISIA U Training Days 2026\n21.04—23.04.2026\n\nCon Sara Colaone, a cura di Federica Alma Iacobelli e Silvana Sola. Riservato al Biennio in Comunicazione Visiva e Design per l’Editoria: Illustrazione.\n\nIl workshop ha esplorato le potenzialità dell’illustrazione, del fumetto e della scrittura come strumenti per costruire una narrazione in forma diaristica, intrecciando immagini e parole, testi originali e/o citati.\n\nA partire dall’osservazione del reale, le studentesse hanno sviluppato un percorso progettuale che ha attraversato diverse fasi: storyboard delle tavole, impaginazione e presentazione finale degli elaborati.",
+    image: "/images/diario-a-fumetti/01.jpg",
+    imageAlt: "Tavole illustrate del workshop Diario a fumetti",
+    gallery: gallery("diario-a-fumetti", 10),
   },
   {
     slug: "only-two",
