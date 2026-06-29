@@ -405,15 +405,6 @@ footer {
   margin-bottom: clamp(5.35rem, 6.25vw, 6.8rem);
 }
 
-.home-nav.has-search-open:has(.home-search__status:not([hidden])) {
-  display: block;
-  margin-bottom: var(--home-nav-gap);
-}
-
-.home-nav.has-search-open:has(.home-search__status:not([hidden])) .home-tabs {
-  display: none;
-}
-
 .home-tabs {
   position: relative;
   z-index: 1;
@@ -443,11 +434,6 @@ footer {
   display: grid;
   gap: 0.6rem;
   background: var(--paper);
-}
-
-.home-search:has(.home-search__status:not([hidden])) {
-  position: static;
-  width: auto;
 }
 
 .home-search__bar,
@@ -921,7 +907,7 @@ footer p {
   .home-search.is-results {
     position: absolute;
     z-index: 2;
-    inset: auto calc(var(--home-tab-size) + 0.45rem) auto 0;
+    inset: auto 0 auto 0;
     display: grid;
     gap: 0.35rem;
     padding: 0;
