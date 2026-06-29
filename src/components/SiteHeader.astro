@@ -141,10 +141,24 @@ const menuCourseLabels = {
       }
       return next;
     };
+    const makeNearbySlots = (previousSlots: number[], spread = 0.96) => {
+      if (!previousSlots.length) return makeSlots(spread);
+      const minGap = spread / (letters.length - 1) * 0.25;
+      const maxShift = 0.07;
+      const next = previousSlots.map((slot, index) =>
+        index === 0 ? 0 : Math.min(spread, Math.max(0, slot + (Math.random() - 0.5) * maxShift))
+      );
+      for (let index = next.length - 1; index > 0; index -= 1) {
+        next[index] = Math.min(next[index], spread - (next.length - 1 - index) * minGap);
+      }
+      for (let index = 1; index < next.length; index += 1) {
+        next[index] = Math.max(next[index], next[index - 1] + minGap);
+      }
+      return next;
+    };
     let slots = makeSlots();
 
     const placeLetters = (animate = false) => {
-      if (animate) slots = makeSlots(0.96, slots);
       const sources = letters.map((letter) => {
         const rect = letter.getBoundingClientRect();
         return {
@@ -161,6 +175,7 @@ const menuCourseLabels = {
       const frameWidth = freezeMobileFrame ? frozenFrame.width : innerWidth;
       const frameHeight = freezeMobileFrame ? frozenFrame.height : innerHeight;
       const isMobile = mobileQuery.matches;
+      if (animate) slots = isMobile ? makeNearbySlots(slots) : makeSlots(0.96, slots);
       const origin = {
         x: (introOrigin?.left ?? gutter) + sources[0].width / 2,
         y: (introOrigin?.top ?? 2) + sources[0].height / 2,
