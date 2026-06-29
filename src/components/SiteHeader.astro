@@ -91,11 +91,12 @@ const menuCourseLabels = {
   });
 
   const setMenu = (open: boolean) => {
+    const changed = document.documentElement.classList.contains("has-menu-open") !== open;
     document.documentElement.classList.toggle("has-menu-open", open);
     menu?.setAttribute("aria-hidden", String(!open));
     menuToggle?.setAttribute("aria-expanded", String(open));
     menuToggle?.setAttribute("aria-label", open ? "Chiudi menu" : "Apri menu");
-    if (open) requestAnimationFrame(() => relayoutLetters(true));
+    if (changed) requestAnimationFrame(() => relayoutLetters(true));
   };
 
   menuToggle?.addEventListener("click", () => setMenu(!document.documentElement.classList.contains("has-menu-open")));
@@ -120,27 +121,30 @@ const menuCourseLabels = {
       width: visualViewport?.width ?? innerWidth,
       height: visualViewport?.height ?? innerHeight,
     };
-    const makeSlots = (spread = 0.96) => {
-      const weights = letters.slice(1).map((_, index) => {
-        const clustered = index % 5 === 0 || index % 7 === 2;
-        return clustered ? 0.45 + Math.random() * 0.25 : 0.9 + Math.random() * 1.15;
-      });
-      const total = weights.reduce((sum, weight) => sum + weight, 0);
-      let cursor = 0;
-      return [0, ...weights.map((weight) => (cursor += (weight / total) * spread))];
+    type EdgeSide = "top" | "right" | "bottom" | "left";
+    type EdgePoint = { x: number; y: number; side: EdgeSide };
+    const makeSlots = (spread = 0.96, previousSlots: number[] = []) => {
+      const build = () => {
+        const weights = letters.slice(1).map(() =>
+          Math.random() < 0.35 ? 0.35 + Math.random() * 0.35 : 0.9 + Math.random() * 1.5
+        );
+        const total = weights.reduce((sum, weight) => sum + weight, 0);
+        let cursor = 0;
+        return [0, ...weights.map((weight) => (cursor += (weight / total) * spread))];
+      };
+
+      let next = build();
+      for (let tries = 0; previousSlots.length && tries < 4; tries += 1) {
+        const changed = next.filter((slot, index) => index > 0 && Math.abs(slot - previousSlots[index]) > 0.025).length;
+        if (changed > letters.length * 0.55) break;
+        next = build();
+      }
+      return next;
     };
-    const makeMenuSlots = (spread = 0.96) => [
-      0,
-      ...letters.slice(1).map((_, index) => ((index + 1) / (letters.length - 1)) * spread),
-    ];
-    const slots = makeSlots();
-    const menuSlots = makeMenuSlots();
+    let slots = makeSlots();
 
     const placeLetters = (animate = false) => {
-      letters.forEach((letter) => letter.getAnimations().forEach((animation) => animation.cancel()));
-      mark.style.position = "fixed";
-      mark.style.left = `${edgeInset}px`;
-      mark.style.top = `${edgeInset}px`;
+      if (animate) slots = makeSlots(0.96, slots);
       const sources = letters.map((letter) => {
         const rect = letter.getBoundingClientRect();
         return {
@@ -150,6 +154,10 @@ const menuCourseLabels = {
           height: letter.offsetHeight || rect.height,
         };
       });
+      letters.forEach((letter) => letter.getAnimations().forEach((animation) => animation.cancel()));
+      mark.style.position = "fixed";
+      mark.style.left = `${edgeInset}px`;
+      mark.style.top = `${edgeInset}px`;
       const frameWidth = freezeMobileFrame ? frozenFrame.width : innerWidth;
       const frameHeight = freezeMobileFrame ? frozenFrame.height : innerHeight;
       const isMobile = mobileQuery.matches;
@@ -163,42 +171,41 @@ const menuCourseLabels = {
       const sideHeight = bottom - origin.y;
       const bottomWidth = right - origin.x;
       const perimeter = isMobile ? topWidth + sideHeight * 2 : topWidth + sideHeight * 2 + bottomWidth;
-      const mobileSideTop = origin.y + Math.max(18, sources[0].height);
 
-      const pointAt = (distance: number) => {
+      const pointAt = (distance: number): EdgePoint => {
         if (distance <= topWidth) return { x: origin.x + distance, y: origin.y, side: "top" };
         distance -= topWidth;
         if (distance <= sideHeight) return { x: right, y: origin.y + distance, side: "right" };
         distance -= sideHeight;
-        if (isMobile) return { x: edgeInset, y: origin.y + distance, side: "left" };
+        if (isMobile) return { x: edgeInset, y: bottom - distance, side: "left" };
         if (distance <= bottomWidth) return { x: right - distance, y: bottom, side: "bottom" };
         distance -= bottomWidth;
         return { x: edgeInset, y: bottom - distance, side: "left" };
       };
 
-      const mobilePoints = () => {
-        const topCount = 10;
-        const rightCount = 9;
-        const sideHeightInset = bottom - mobileSideTop;
-        return letters.map((_, index) => {
-          if (index < topCount) {
-            return { x: origin.x + (topWidth * index) / (topCount - 1), y: origin.y, side: "top" };
-          }
-          if (index < topCount + rightCount) {
-            return { x: right, y: mobileSideTop + (sideHeightInset * (index - topCount)) / (rightCount - 1), side: "right" };
-          }
-          const leftIndex = index - topCount - rightCount;
-          const leftCount = letters.length - topCount - rightCount;
-          return { x: edgeInset, y: bottom - (sideHeightInset * leftIndex) / (leftCount - 1), side: "left" };
-        });
-      };
-      const activeSlots = document.documentElement.classList.contains("has-menu-open") ? menuSlots : slots;
-      const points = isMobile ? mobilePoints() : activeSlots.map((slot) => pointAt(slot * perimeter));
-      const place = (point: { x: number; y: number; side: string }, rect: { width: number; height: number }) => ({
+      const points = slots.map((slot) => pointAt(slot * perimeter));
+      const place = (point: EdgePoint, rect: { width: number; height: number }) => ({
         x: point.x - rect.width / 2,
         y: point.y - rect.height / 2,
         side: point.side,
       });
+      const nearestSide = (point: { x: number; y: number }) =>
+        [
+          { side: "top", distance: Math.abs(point.y - origin.y) },
+          { side: "right", distance: Math.abs(point.x - right) },
+          ...(isMobile ? [] : [{ side: "bottom", distance: Math.abs(point.y - bottom) }]),
+          { side: "left", distance: Math.abs(point.x - edgeInset) },
+        ].sort((a, b) => a.distance - b.distance)[0].side as EdgeSide;
+      const samePoint = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+        Math.abs(a.x - b.x) < 0.5 && Math.abs(a.y - b.y) < 0.5;
+      const addWaypoint = (
+        path: { x: number; y: number }[],
+        point: EdgePoint,
+        rect: { width: number; height: number }
+      ) => {
+        const next = place(point, rect);
+        if (!samePoint(path[path.length - 1], next)) path.push(next);
+      };
 
       mark.classList.add("is-scattered");
 
@@ -211,18 +218,35 @@ const menuCourseLabels = {
 
         if (!animate || index === 0) return;
 
+        const sourcePoint = {
+          x: source.left + source.width / 2,
+          y: source.top + source.height / 2,
+        };
+        const sourceSide = nearestSide(sourcePoint);
         const path = [{ x: source.left, y: source.top }];
-        const startsOnLeft = isMobile && target.side === "left";
-        if (startsOnLeft) path[0] = place({ x: edgeInset, y: mobileSideTop, side: "left" }, source);
-        if (index > 0 && (target.side === "right" || target.side === "bottom" || (!isMobile && target.side === "left"))) {
-          path.push(place({ x: right, y: origin.y, side: "top" }, source));
+
+        if (sourceSide !== target.side) {
+          if (isMobile) {
+            if (sourceSide === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
+            if (sourceSide === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
+            if (target.side === "right") addWaypoint(path, { x: right, y: origin.y, side: "right" }, source);
+            if (target.side === "left") addWaypoint(path, { x: edgeInset, y: origin.y, side: "left" }, source);
+          } else {
+            const nextEdge: Record<EdgeSide, { point: EdgePoint; side: EdgeSide }> = {
+              top: { point: { x: right, y: origin.y, side: "right" }, side: "right" },
+              right: { point: { x: right, y: bottom, side: "bottom" }, side: "bottom" },
+              bottom: { point: { x: edgeInset, y: bottom, side: "left" }, side: "left" },
+              left: { point: { x: edgeInset, y: origin.y, side: "top" }, side: "top" },
+            };
+            let currentSide = sourceSide;
+            for (let step = 0; currentSide !== target.side && step < 4; step += 1) {
+              const next = nextEdge[currentSide];
+              addWaypoint(path, next.point, source);
+              currentSide = next.side;
+            }
+          }
         }
-        if (!isMobile && index > 0 && (target.side === "bottom" || target.side === "left")) {
-          path.push(place({ x: right, y: bottom, side: "bottom" }, source));
-        }
-        if (!isMobile && index > 0 && target.side === "left") {
-          path.push(place({ x: edgeInset, y: bottom, side: "left" }, source));
-        }
+
         path.push(target);
 
         const distances = path.slice(1).map((point, pointIndex) =>

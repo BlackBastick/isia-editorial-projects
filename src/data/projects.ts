@@ -1,6 +1,6 @@
 export const courses = [
   "Triennio — Progettazione grafica e Comunicazione visiva",
-  "Biennio — Comunicazione e Design per l’Editoria",
+  "Biennio — Editoria",
   "Biennio — Fotografia",
   "Biennio — Illustrazione",
 ] as const;
@@ -98,7 +98,7 @@ export const projects: Project[] = [
     title: "L’eco del tempo",
     student: "Simone Cerchi, Francesco Fettucciari",
     teacher: "Elisa Pasqual",
-    year: 2025,
+    year: 2026,
     course: courses[1],
     subject: "Metodologia della progettazione",
     description:

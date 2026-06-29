@@ -474,6 +474,10 @@ footer {
   padding-block: 0 var(--space-2xl);
 }
 
+.home-nav + .project-grid {
+  padding-bottom: clamp(3rem, 6vw, 6rem);
+}
+
 .project-card {
   min-width: 0;
 }
