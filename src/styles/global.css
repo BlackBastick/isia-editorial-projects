@@ -685,7 +685,7 @@ footer p {
   html,
   body {
     height: 100vh;
-    height: 100lvh;
+    height: 100dvh;
     overflow: hidden;
   }
 
@@ -702,23 +702,10 @@ footer p {
   main {
     flex: 1 1 auto;
     min-height: 0;
+    padding-bottom: env(safe-area-inset-bottom);
     background: var(--paper);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-  }
-
-  .project-detail-page,
-  .project-detail-page body {
-    height: auto;
-    overflow: auto;
-  }
-
-  .project-detail-page body {
-    display: block;
-  }
-
-  .project-detail-page main {
-    overflow: visible;
   }
 
   .site-header {
