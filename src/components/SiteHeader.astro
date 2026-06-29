@@ -76,6 +76,7 @@ const menuCourseLabels = {
   const menuClose = document.querySelector<HTMLButtonElement>(".menu-close");
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let relayoutLetters = (_animate = false) => {};
+  const requestTitleRelayout = () => requestAnimationFrame(() => relayoutLetters(true));
   const syncHomeNavOffset = () => {
     const navAnchor = document.querySelector<HTMLElement>(".home-nav, .entity-heading, .project-info");
     if (!navAnchor) return;
@@ -96,11 +97,12 @@ const menuCourseLabels = {
     menu?.setAttribute("aria-hidden", String(!open));
     menuToggle?.setAttribute("aria-expanded", String(open));
     menuToggle?.setAttribute("aria-label", open ? "Chiudi menu" : "Apri menu");
-    if (changed) requestAnimationFrame(() => relayoutLetters(true));
+    if (changed) requestTitleRelayout();
   };
 
   menuToggle?.addEventListener("click", () => setMenu(!document.documentElement.classList.contains("has-menu-open")));
   menuClose?.addEventListener("click", () => setMenu(false));
+  addEventListener("site-title-relayout", requestTitleRelayout);
   addEventListener("keydown", (event) => {
     if (event.key === "Escape") setMenu(false);
   });

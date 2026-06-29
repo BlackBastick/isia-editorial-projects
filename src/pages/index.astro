@@ -38,6 +38,7 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
           <div class="home-search__tags" aria-label="Tag consigliati">
             {suggestedTags.map((tag) => <button class="home-tab" type="button" data-search-tag={tag}>{tag}</button>)}
           </div>
+          <h1 class="home-search__status" data-search-status hidden></h1>
         </section>
         <button class="search-toggle" type="button" aria-expanded="false" aria-controls="home-search" aria-label="Apri ricerca">
           <svg viewBox="0 0 60 60" aria-hidden="true" focusable="false">
@@ -69,8 +70,11 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
       const searchToggle = document.querySelector<HTMLButtonElement>(".search-toggle");
       const searchClose = document.querySelector<HTMLButtonElement>("[data-search-close]");
       const searchInput = document.querySelector<HTMLInputElement>("[data-search-input]");
+      const searchStatus = document.querySelector<HTMLElement>("[data-search-status]");
       const searchTags = [...document.querySelectorAll<HTMLButtonElement>("[data-search-tag]")];
       let activeFilter = "all";
+      let activeQuery = "";
+      let activeLabel = "";
       const mobileSearchQuery = matchMedia("(max-width: 42rem)");
 
       const normalize = (value: string) =>
@@ -103,17 +107,35 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
 
       const applyProjects = () => {
         const searching = homeNav?.classList.contains("has-search-open");
-        const query = normalize(searchInput?.value ?? "");
+        const query = activeQuery;
+        let visibleProjects = 0;
         projectCards.forEach((card) => {
           const matchesFilter = activeFilter === "all" || card.dataset.category === activeFilter;
           const matchesSearch = !query || normalize(card.dataset.search ?? "").includes(query);
           card.hidden = searching ? !matchesSearch : !matchesFilter;
+          if (!card.hidden) visibleProjects += 1;
         });
         searchPanel?.classList.toggle("is-results", mobileSearchQuery.matches && Boolean(query));
+        if (searchStatus) {
+          searchStatus.hidden = !query;
+          searchStatus.textContent = query
+            ? visibleProjects
+              ? `Filtro: ${activeLabel}, ${visibleProjects} ${visibleProjects === 1 ? "progetto" : "progetti"}`
+              : "Nessun risultato trovato"
+            : "";
+        }
         updateTags();
       };
 
+      const submitSearch = () => {
+        activeLabel = (searchInput?.value ?? "").trim();
+        activeQuery = normalize(searchInput?.value ?? "");
+        applyProjects();
+        searchInput?.blur();
+      };
+
       const setSearch = (open: boolean) => {
+        const changed = homeNav?.classList.contains("has-search-open") !== open;
         homeNav?.classList.toggle("has-search-open", open);
         document.documentElement.classList.toggle("has-search-open", open);
         searchPanel?.toggleAttribute("hidden", !open);
@@ -122,8 +144,11 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
           requestAnimationFrame(() => searchInput?.focus());
         } else {
           if (searchInput) searchInput.value = "";
+          activeQuery = "";
+          activeLabel = "";
         }
         applyProjects();
+        if (changed) dispatchEvent(new Event("site-title-relayout"));
       };
 
       homeTabs.forEach((tab) => {
@@ -140,12 +165,17 @@ const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? 
 
       searchToggle?.addEventListener("click", () => setSearch(true));
       searchClose?.addEventListener("click", () => setSearch(false));
-      searchInput?.addEventListener("input", applyProjects);
+      searchInput?.addEventListener("input", updateTags);
+      searchInput?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          submitSearch();
+        }
+      });
       searchTags.forEach((tag) => {
         tag.addEventListener("click", () => {
           if (searchInput) searchInput.value = tag.dataset.searchTag ?? "";
-          applyProjects();
-          searchInput?.focus();
+          submitSearch();
         });
       });
       addEventListener("keydown", (event) => {
