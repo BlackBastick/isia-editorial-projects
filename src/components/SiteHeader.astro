@@ -24,9 +24,7 @@ const menuCourseLabels = {
   {
     !hideMenuToggle && (
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Apri menu">
-        <span></span>
-        <span></span>
-        <span></span>
+        <img src="/hamburger-b.svg" alt="" aria-hidden="true" />
       </button>
     )
   }
@@ -39,7 +37,9 @@ const menuCourseLabels = {
 </header>
 
 <aside class="site-menu" id="site-menu" aria-hidden="true">
-  <button class="menu-close" type="button" aria-label="Chiudi menu">×</button>
+  <button class="menu-close" type="button" aria-label="Chiudi menu">
+    <img src="/close-b.svg" alt="" aria-hidden="true" />
+  </button>
   <nav aria-label="Filtri archivio">
     <a href="/">Tutti i progetti</a>
     <span aria-hidden="true">—</span>

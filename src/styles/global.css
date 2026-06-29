@@ -218,11 +218,10 @@ footer {
   fill: currentColor;
 }
 
-.menu-toggle span {
+.menu-toggle img {
   display: block;
-  width: 1.1rem;
-  height: 2px;
-  background: currentColor;
+  width: 1.18rem;
+  height: auto;
 }
 
 .has-menu-open .menu-toggle {
@@ -252,9 +251,12 @@ footer {
   width: var(--home-tab-size);
   height: var(--home-tab-size);
   padding: 0;
-  font-family: "Halyard Display Book Local", sans-serif;
-  font-size: 2.05rem;
-  font-weight: 400;
+}
+
+.menu-close img {
+  display: block;
+  width: 0.88rem;
+  height: auto;
 }
 
 .site-menu {
