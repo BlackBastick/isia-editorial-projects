@@ -99,16 +99,38 @@ const gallery = getProjectGallery(project);
       </div>
     </main>
     <script>
+      const projectInfo = document.querySelector<HTMLElement>(".project-info");
+      const projectGallery = document.querySelector<HTMLElement>(".project-gallery");
+      const siteTitle = document.querySelector<HTMLElement>(".site-title");
+      const syncProjectInfoHeight = () => {
+        if (!projectInfo) return;
+        projectInfo.style.setProperty("--project-info-height", `${projectInfo.scrollHeight}px`);
+        if (projectGallery) {
+          const galleryTop = projectGallery.getBoundingClientRect().top + scrollY;
+          projectInfo.style.setProperty("--project-stick-start", `${Math.max(0, galleryTop)}px`);
+        }
+      };
+
+      requestAnimationFrame(syncProjectInfoHeight);
+      document.fonts?.ready.then(syncProjectInfoHeight);
+      addEventListener("resize", syncProjectInfoHeight);
+      if (projectInfo) new ResizeObserver(syncProjectInfoHeight).observe(projectInfo);
+      if (siteTitle) new MutationObserver(syncProjectInfoHeight).observe(siteTitle, { attributes: true, attributeFilter: ["class"] });
+
       document.querySelectorAll("img[data-gallery-media]").forEach((image) => {
         const img = image as HTMLImageElement;
-        const mark = () => img.classList.toggle("is-landscape", img.naturalWidth > img.naturalHeight);
+        const mark = () => {
+          img.classList.toggle("is-landscape", img.naturalWidth > img.naturalHeight);
+        };
         img.addEventListener("load", mark, { once: true });
         if (img.complete) mark();
       });
 
       document.querySelectorAll("video[data-gallery-media]").forEach((video) => {
         const vid = video as HTMLVideoElement;
-        const mark = () => vid.classList.toggle("is-landscape", vid.videoWidth > vid.videoHeight);
+        const mark = () => {
+          vid.classList.toggle("is-landscape", vid.videoWidth > vid.videoHeight);
+        };
         vid.addEventListener("loadedmetadata", mark, { once: true });
         if (vid.readyState >= 1) mark();
       });

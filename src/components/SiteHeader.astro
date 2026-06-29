@@ -77,7 +77,7 @@ const menuCourseLabels = {
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let relayoutLetters = (_animate = false) => {};
   const syncHomeNavOffset = () => {
-    const navAnchor = document.querySelector<HTMLElement>(".home-nav, .entity-heading");
+    const navAnchor = document.querySelector<HTMLElement>(".home-nav, .entity-heading, .project-info");
     if (!navAnchor) return;
     document.documentElement.style.setProperty("--home-nav-y", `${navAnchor.getBoundingClientRect().top}px`);
   };
