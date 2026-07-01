@@ -855,7 +855,7 @@ footer p {
   main {
     flex: 1 1 auto;
     min-height: 0;
-    padding-bottom: calc(var(--space-2xl) + var(--home-nav-y) + 8rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--space-2xl) + var(--home-nav-y) + 5rem + env(safe-area-inset-bottom));
     background: var(--paper);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
