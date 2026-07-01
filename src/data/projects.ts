@@ -30,6 +30,13 @@ export type Project = {
   gallery?: string[];
 };
 
+const courseSearchTags: Record<Course, string[]> = {
+  [courses[0]]: ["triennio", "grafica", "comunicazione visiva"],
+  [courses[1]]: ["biennio", "editoria", "comunicazione e design per l’editoria"],
+  [courses[2]]: ["biennio", "fotografia"],
+  [courses[3]]: ["biennio", "illustrazione"],
+};
+
 export const isVideo = (src: string) => /\.(mp4|webm|ogg|mov|m4v)$/i.test(src);
 
 export const splitNames = (value: string) => value.split(",").map((name) => name.trim()).filter(Boolean);
@@ -61,6 +68,26 @@ export const projectsByCourse = (course: Course) => projects.filter((project) =>
 export const projectsBySubject = (subject: string) => projects.filter((project) => project.subject === subject);
 
 export const projectsByYear = (year: number) => projects.filter((project) => project.year === year);
+
+export const projectSearchTags = (project: Project) =>
+  [...new Set([...(project.tags ?? []), ...courseSearchTags[project.course], ...(project.subject ? [project.subject] : [])].map((tag) => tag.toLowerCase()))];
+
+export const projectSearchText = (project: Project) =>
+  [
+    project.title,
+    project.student,
+    project.teacher,
+    project.guest,
+    project.year,
+    project.course,
+    courseLabels[project.course],
+    project.subject,
+    project.description,
+    ...projectSearchTags(project),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 
 const gallery = (slug: string, count: number) =>
   Array.from({ length: count }, (_, index) => `/images/${slug}/${String(index + 1).padStart(2, "0")}.jpg`);

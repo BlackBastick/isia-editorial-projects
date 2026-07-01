@@ -2,10 +2,10 @@
 import ProjectCard from "../components/ProjectCard.astro";
 import SeoHead from "../components/SeoHead.astro";
 import SiteHeader from "../components/SiteHeader.astro";
-import { projects } from "../data/projects";
+import { projectSearchTags, projects } from "../data/projects";
 import "../styles/global.css";
 
-const suggestedTags = [...new Set(projects.flatMap((project) => project.tags ?? []))];
+const suggestedTags = [...new Set(projects.flatMap(projectSearchTags))];
 ---
 
 <!doctype html>

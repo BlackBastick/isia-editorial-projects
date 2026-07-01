@@ -1,6 +1,6 @@
 ---
 import MetaLinks from "./MetaLinks.astro";
-import { isVideo, type Project } from "../data/projects";
+import { isVideo, projectSearchTags, projectSearchText, type Project } from "../data/projects";
 
 interface Props {
   project: Project;
@@ -15,8 +15,8 @@ const category = categoryText.includes("workshop") ? "workshop" : categoryText.i
 const isWorkshop = category === "workshop";
 const participantLabel = isWorkshop ? "Partecipanti" : project.student.includes(",") ? "Studenti" : "Studente";
 const teacherLabel = isWorkshop ? "A cura di" : "Docente";
-const searchText = [project.title, ...(project.tags ?? [])].join(" ").toLowerCase();
-const searchTags = (project.tags ?? []).join("|").toLowerCase();
+const searchText = projectSearchText(project);
+const searchTags = projectSearchTags(project).join("|");
 ---
 
 <article class="project-card" data-project data-course={project.course} data-category={category} data-search={searchText} data-tags={searchTags}>
