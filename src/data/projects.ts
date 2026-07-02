@@ -69,6 +69,7 @@ export const projectsBySubject = (subject: string) => projects.filter((project) 
 
 export const projectsByYear = (year: number) => projects.filter((project) => project.year === year);
 
+// Search tags combine manual tags, course labels and subjects so queries like "editoria" find every related project.
 export const projectSearchTags = (project: Project) =>
   [...new Set([...(project.tags ?? []), ...courseSearchTags[project.course], ...(project.subject ? [project.subject] : [])].map((tag) => tag.toLowerCase()))];
 

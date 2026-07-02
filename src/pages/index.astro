@@ -70,6 +70,7 @@ const suggestedTags = [...new Set(projects.flatMap(projectSearchTags))];
       let activeLabel = "";
       const mobileSearchQuery = matchMedia("(max-width: 42rem)");
 
+      // Accent-insensitive matching keeps Italian labels searchable with or without diacritics.
       const normalize = (value: string) =>
         value
           .normalize("NFD")
@@ -98,6 +99,7 @@ const suggestedTags = [...new Set(projects.flatMap(projectSearchTags))];
         });
       };
 
+      // One function owns project visibility for both archive filters and search results.
       const applyProjects = () => {
         const searching = homeNav?.classList.contains("has-search-open");
         const query = activeQuery;

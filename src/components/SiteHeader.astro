@@ -163,6 +163,7 @@ const menuCourseLabels = {
     };
     let slots = makeSlots();
 
+    // The intro mark breaks into fixed letters that stay on the viewport perimeter.
     const placeLetters = (animate = false) => {
       const sources = letters.map((letter) => {
         const rect = letter.getBoundingClientRect();
